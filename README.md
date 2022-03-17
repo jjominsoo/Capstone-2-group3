@@ -6,8 +6,8 @@
 ## 팀원
 | 20153819 | 20163828 | 20161851 |
 | --- | --- | --- |
-| [강지훈](깃허브주소) | [김현석](깃허브주소) | [조민수](https://github.com/jjominsoo) |
-|--- | --- | <img src="https://github.com/jjominsoo.png" width="80"> |
+| [강지훈](https://github.com/feeding1119) | [김현석](https://github.com/HYEONSEOK1) | [조민수](https://github.com/jjominsoo) |
+| <img src="https://github.com/feeding1119.png" width="80"> | <img src="https://github.com/HYEONSEOK1.png" width="80"> | <img src="https://github.com/jjominsoo.png" width="80"> |
 
 ## 역할분담
 웹 개발 = 강지훈
@@ -34,8 +34,7 @@
 | 11주차 | --- | --- | --- |
 | 12주차 | --- | --- | --- |
 | 13주차 | --- | --- | --- |
-| 14주차 | --- | --- | --- |
-| 15주차 | --- | --- | --- |
+
 
 ## 1주차 미팅
 ![image](https://user-images.githubusercontent.com/75295665/156913606-b7359a16-f7f4-4a01-9d30-6de514292a23.png)
