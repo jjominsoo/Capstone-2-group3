@@ -1,13 +1,13 @@
 package jpabook.jpashop.service;
 
-import jpabook.jpashop.domain.Delivery;
+import jpabook.jpashop.domain.item.temp.Delivery;
 import jpabook.jpashop.domain.Member;
-import jpabook.jpashop.domain.Order;
-import jpabook.jpashop.domain.OrderItem;
+import jpabook.jpashop.domain.item.temp.Order;
+import jpabook.jpashop.domain.item.temp.OrderItem;
 import jpabook.jpashop.domain.item.Item;
-import jpabook.jpashop.repository.ItemRepository;
+import jpabook.jpashop.repository.MentorRepository;
 import jpabook.jpashop.repository.MemberRepository;
-import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.MatchingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OrderService {
-    private final OrderRepository orderRepository;
+    private final MatchingRepository orderRepository;
     private final MemberRepository memberRepository;
-    private final ItemRepository itemRepository;
+    private final MentorRepository itemRepository;
 
     @Transactional
     public Long order(Long memberId, Long itemId, int count){
@@ -28,7 +28,7 @@ public class OrderService {
 
         //배송정보 생성
         Delivery delivery = new Delivery();
-        delivery.setAddress(member.getAddress());
+        //delivery.setAddress(member.getAddress());
 
         //주문상품 생성
         OrderItem orderItem = OrderItem.createOrderItem(item, item.getPrice(), count);

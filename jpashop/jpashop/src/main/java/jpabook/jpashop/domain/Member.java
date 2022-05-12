@@ -1,5 +1,7 @@
 package jpabook.jpashop.domain;
 
+import jpabook.jpashop.domain.item.temp.Address;
+import jpabook.jpashop.domain.item.temp.Order;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,13 +12,18 @@ import java.util.List;
 @Entity
 @Getter @Setter
 public class Member {
+    
     @Id @GeneratedValue
     @Column(name = "member_id")
     private Long id;
+
     private String name;
 
+    //@Embedded
+    //private Address address;
+
     @Embedded
-    private Address address;
+    private zzBasicInfo basicInfo;
 
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
