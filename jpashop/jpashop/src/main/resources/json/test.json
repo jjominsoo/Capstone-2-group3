@@ -1,0 +1,11 @@
+{
+  "member_id" : 1,
+  "id" : "jjominsoo",
+  "password" : "1234",
+  "name" : "조민수",
+  "school" : "중앙대",
+  "grade" : "3.0",
+  "auth" : false,
+  "img" : "test.img",
+  "img2" : "test2.img"
+}
