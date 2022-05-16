@@ -18,9 +18,6 @@ public class Member {
 
     private String name;
 
-    //@Embedded
-    //private Address address;
-
     @Embedded
     private zzBasicInfo basicInfo;
 

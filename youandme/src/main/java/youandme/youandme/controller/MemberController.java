@@ -57,10 +57,8 @@ public class MemberController {
         }
 
 
-        String serverUrl = getServerUrl(request);
-
         zzBasicInfo basicInfo = new zzBasicInfo(memberForm.getID(), memberForm.getPassword(), memberForm.getRname(), memberForm.getSchool(), memberForm.getGrade(), memberForm.getSubject());//, memberForm.getFile());
-
+        String serverUrl = getServerUrl(request);
         String filePath =  serverUrl + "/images/";
         String fileName =  UUID.randomUUID().toString()+"_"+multipartFile.getOriginalFilename();
 

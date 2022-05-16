@@ -8,13 +8,14 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>아이디이</th>
+                <th>아이디</th>
                 <th>비밀번호</th>
-<!--                <th>이름</th>-->
-<!--                <th>학교</th>-->
+                <th>이름</th>
+                <th>학교</th>
                 <th>성적</th>
-<!--                <th>학과</th>-->
+                <th>학과</th>
                 <th>이미지</th>
+                <th>승인</th>
             </tr>
             </thead>
             <tbody>
@@ -22,18 +23,25 @@
             <tr th:each="member : ${members}">
                 <td th:text="${member.basicInfo?.ID}"></td>
                 <td th:text="${member.basicInfo?.password}"></td>
-<!--                <td th:text="${member.basicInfo?.Rname}"></td>-->
-<!--                <td th:text="${member.basicInfo?.school}"></td>-->
+                <td th:text="${member.basicInfo?.Rname}"></td>
+                <td th:text="${member.basicInfo?.school}"></td>
                 <td th:text="${member.basicInfo?.grade}"></td>
-<!--                <td th:text="${member.basicInfo?.subject}"></td>-->
-                <td th:text="${member.files?.fileOriName}"></td>
-                <td th:text="${member.files?.fileName}"></td>
-                <img th:src="|${member.files?.filePath}${member.files?.fileName}|"/>
+                <td th:text="${member.basicInfo?.subject}"></td>
+                <td><img th:src="|${member.files?.filePath}${member.files?.fileName}|" width="100" height="100" onclick="window.open(this.src)"/></td>
+<!--                <td><button th:onclick="aaa(${member.basicInfo?.grade})">승인</button></td>-->
+                <td><button th:onclick="aaa()">승인</button></td>
+                <script>
+                    function aaa(){
+                        alert("승인되었습니다");
+                    }
+                </script>
             </tr>
             </tbody>
         </table>
     </div>
     <div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->
+
 </body>
+
 </html>

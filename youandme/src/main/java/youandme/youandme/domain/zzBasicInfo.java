@@ -18,13 +18,12 @@ public class zzBasicInfo {
     protected zzBasicInfo(){
     }
 
-    public zzBasicInfo(String ID, String password, String name, String school, String grade, String subject){//,String file) {
+    public zzBasicInfo(String ID, String password, String name, String school, String grade, String subject){
         this.ID = ID;
         this.password = password;
         this.Rname = name;
         this.school = school;
         this.grade = grade;
         this.subject = subject;
-        //this.file = file;
     }
 }
