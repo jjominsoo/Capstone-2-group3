@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.*;
 import java.net.URI;
@@ -35,6 +36,11 @@ public class MemberController {
 
     private final MemberService memberService;
 
+
+    private String getServerUrl(HttpServletRequest request) {
+        return new StringBuffer("http://").append(request.getServerName()).append(":").append(request.getServerPort()).toString();
+    }
+
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/members/new")
     public String createForm(Model model) {
@@ -45,41 +51,23 @@ public class MemberController {
 
     @CrossOrigin(origins = "*")
     @PostMapping("/members/new")
-    public String create(@Valid MemberForm memberForm, BindingResult result, @RequestParam("uploadfile") MultipartFile multipartFile) throws IOException {
+    public String create(HttpServletRequest request, @Valid MemberForm memberForm, BindingResult result, @RequestParam("uploadfile") MultipartFile multipartFile) throws IOException {
         if (result.hasErrors()) {
             return "members/createMemberForm";
         }
 
+
+        String serverUrl = getServerUrl(request);
+
         zzBasicInfo basicInfo = new zzBasicInfo(memberForm.getID(), memberForm.getPassword(), memberForm.getRname(), memberForm.getSchool(), memberForm.getGrade(), memberForm.getSubject());//, memberForm.getFile());
 
-        String filePath =  "C:\\zzImages\\";
+        String filePath =  serverUrl + "/images/";
         String fileName =  UUID.randomUUID().toString()+"_"+multipartFile.getOriginalFilename();
-
-//        HttpHeaders header = new HttpHeaders();
-//        Path imgPath = null;
-//        imgPath = Paths.get(filePath + fileName);
-//        header.add("Content-Type", multipartFile.getContentType());
-
-
-
-//        InputStream inputStream = multipartFile.getInputStream();
-//        ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-//        int len = 0;
-//        byte[] buf = new byte[1024];
-//        while( (len = inputStream.read(buf)) != 0){
-//            byteOutStream.write(buf,0,len);
-//        }
-//
-//        byte[] fileArray = byteOutStream.toByteArray();
-//        imageString[i] = new String(Base64.encodeBase64(fileArray));
-
-
 
         zzFiles files = new zzFiles(multipartFile.getOriginalFilename(), fileName, filePath);
 
 
-
-        Path savePath = Paths.get(filePath + fileName);
+        Path savePath = Paths.get("./images/" + fileName);
         multipartFile.transferTo(savePath);
 
 

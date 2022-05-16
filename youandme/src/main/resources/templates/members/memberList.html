@@ -28,7 +28,7 @@
 <!--                <td th:text="${member.basicInfo?.subject}"></td>-->
                 <td th:text="${member.files?.fileOriName}"></td>
                 <td th:text="${member.files?.fileName}"></td>
-                <img src="C:/zzImages/b2646193-fdb6-46ee-9706-0b3b21f1600d_image2.jpg">
+                <img th:src="|${member.files?.filePath}${member.files?.fileName}|"/>
             </tr>
             </tbody>
         </table>
