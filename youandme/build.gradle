@@ -25,6 +25,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-devtools'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+	implementation 'mysql:mysql-connector-java'
 
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
 	implementation 'junit:junit:4.13.1'
