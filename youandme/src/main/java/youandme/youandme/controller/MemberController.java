@@ -1,30 +1,22 @@
 package youandme.youandme.controller;
 
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import youandme.youandme.domain.Member;
 import youandme.youandme.domain.zzBasicInfo;
 import youandme.youandme.domain.zzFiles;
-import youandme.youandme.exception.NotEnoughStockException;
 import youandme.youandme.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -85,5 +77,22 @@ public class MemberController {
         return "members/memberList";
     }
 
+    @ResponseBody
+    @GetMapping(value = "/memberlist")
+    public List<MobileMember> memberlist(Model model){
+        List<Member> members = memberService.findMembers();
 
+        List<MobileMember> mobileMemberList = new ArrayList<>();
+        for (Member member : members) {
+            MobileMember mobileMember = new MobileMember();
+            mobileMember.setID(member.getId());
+            mobileMember.setName(member.getName());
+            mobileMember.setSchool(member.getBasicInfo().getSchool());
+            mobileMember.setGrade(member.getBasicInfo().getGrade());
+            mobileMember.setSubject(member.getBasicInfo().getSubject());
+            mobileMember.setCompanyFilePath(member.getFiles().getFilePath()+member.getFiles().getFileName());
+            mobileMemberList.add(mobileMember);
+        }
+        return mobileMemberList;
+    }
 }
