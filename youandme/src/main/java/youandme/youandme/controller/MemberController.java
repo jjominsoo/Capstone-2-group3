@@ -91,6 +91,8 @@ public class MemberController {
             mobileMember.setGrade(member.getBasicInfo().getGrade());
             mobileMember.setSubject(member.getBasicInfo().getSubject());
             mobileMember.setCompanyFilePath(member.getFiles().getFilePath()+member.getFiles().getFileName());
+            mobileMember.setProfileFilePath(member.getFiles().getFilePath()+member.getFiles().getFileName());
+            mobileMember.setSchoolFilePath(member.getFiles().getFilePath()+member.getFiles().getFileName());
             mobileMemberList.add(mobileMember);
         }
         return mobileMemberList;
