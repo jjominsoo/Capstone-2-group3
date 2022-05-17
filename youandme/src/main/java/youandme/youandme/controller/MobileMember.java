@@ -10,6 +10,7 @@ public class MobileMember {
     private String school;
     private String grade;
     private String subject;
+    private String profileFilePath;
     private String schoolFilePath;
     private String companyFilePath;
 }
