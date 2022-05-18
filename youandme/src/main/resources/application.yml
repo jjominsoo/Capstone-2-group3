@@ -6,12 +6,13 @@ spring:
     password: qwe123!@#
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
       # show_sql: true
       #  format_sql: false
-
+  servlet:
+    multipart:
 
 
 

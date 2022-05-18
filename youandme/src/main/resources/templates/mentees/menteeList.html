@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>아이디</th>
+                <th>비밀번호</th>
+                <th>이름</th>
+                <th>학교</th>
+                <th>성적</th>
+                <th>학과</th>
+                <th>이미지</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr th:each="mentee : ${mentees}">
+                <td th:text="${mentee.basicInfo?.ID}"></td>
+                <td th:text="${mentee.basicInfo?.password}"></td>
+                <td th:text="${mentee.Name}"></td>
+                <td th:text="${mentee.basicInfo?.school}"></td>
+                <td th:text="${mentee.basicInfo?.grade}"></td>
+                <td th:text="${mentee.basicInfo?.subject}"></td>
+                <td><img th:src="|${mentee.profiles?.profilePath}${mentee.profiles?.profileName}|" width="100" height="100" onclick="window.open(this.src)"/></td>
+                <td><button th:onclick="aaa()">승인</button></td>
+                <script>
+                    function aaa(){
+                        alert("승인되었습니다");
+                    }
+                </script>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+
+</body>
+
+</html>

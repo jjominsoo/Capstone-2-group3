@@ -1,7 +1,7 @@
 package youandme.youandme.service;
 
-import youandme.youandme.domain.Member;
-import youandme.youandme.repository.MemberRepository;
+import youandme.youandme.domain.Mentee;
+import youandme.youandme.repository.MenteeRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +18,17 @@ import static org.junit.Assert.*;
 @Transactional
 public class MemberServiceTest {
 
-    @Autowired MemberService memberService;
-    @Autowired MemberRepository memberRepository;
+    @Autowired
+    MenteeService memberService;
+    @Autowired
+    MenteeRepository memberRepository;
     @Autowired EntityManager em;
 
 
     @Test
     public void 회원가입() throws Exception{
         //giver
-        Member member = new Member();
+        Mentee member = new Mentee();
         member.setName("MinSoo");
 
         //when
@@ -40,10 +42,10 @@ public class MemberServiceTest {
     @Test(expected = IllegalStateException.class)
     public void 중복예외() throws Exception{
         //given
-        Member member1 = new Member();
+        Mentee member1 = new Mentee();
         member1.setName("what");
 
-        Member member2 = new Member();
+        Mentee member2 = new Mentee();
         member2.setName("what");
 
         //when
