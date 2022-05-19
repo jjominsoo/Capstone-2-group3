@@ -56,6 +56,9 @@ public class MenteeController {
         System.out.println("menteeFormPWD = " + menteeForm.getPassword());
         System.out.println("menteeFormPN = " + menteeForm.getProfileName());
         System.out.println("menteeFormPP = " + menteeForm.getProfilePath());
+        if(profile.isEmpty()){
+            System.out.println("file is empty");
+        }
         System.out.println("profileOrigin = " + profile.getOriginalFilename());
         System.out.println("==============================================================================");
 
