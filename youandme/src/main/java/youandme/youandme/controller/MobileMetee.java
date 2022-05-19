@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter @Setter
 public class MobileMetee {
+
     private Long index;
     private String ID;
     private String password;
