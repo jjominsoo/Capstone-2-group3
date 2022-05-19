@@ -49,6 +49,9 @@ public class MenteeController {
         }
         Mentee mentee = new Mentee();
 
+        System.out.println("menteeFormName = " + menteeForm.getName());
+        System.out.println("menteeFormID = " + menteeForm.getID());
+
         BasicInfo basicInfo = new BasicInfo(menteeForm.getPassword(), menteeForm.getSchool(), menteeForm.getGrade(), menteeForm.getSubject());
         mentee.setID(menteeForm.getID());
         mentee.setName(menteeForm.getName());
