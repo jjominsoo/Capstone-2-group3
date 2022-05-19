@@ -25,7 +25,7 @@ public class MenteeService {
     }
 
     private void validateDuplicateMentee(Mentee mentee) {
-        List<Mentee> findMentees = menteeRepository.findName(mentee.getBasicInfo().getID());
+        List<Mentee> findMentees = menteeRepository.findName(mentee.getID());
         if(!findMentees.isEmpty()){
             throw new IllegalStateException("Already Exsisting ID!");
         }

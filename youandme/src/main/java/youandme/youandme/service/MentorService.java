@@ -25,7 +25,7 @@ public class MentorService {
     }
 
     private void validateDuplicateMentor(Mentor member) {
-        List<Mentor> findMentors = memberRepository.findName(member.getBasicInfo().getID());
+        List<Mentor> findMentors = memberRepository.findName(member.getID());
         if(!findMentors.isEmpty()){
             throw new IllegalStateException("Already exsisting ID!");
         }

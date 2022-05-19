@@ -49,7 +49,8 @@ public class MenteeController {
         }
         Mentee mentee = new Mentee();
 
-        BasicInfo basicInfo = new BasicInfo(menteeForm.getID(), menteeForm.getPassword(), menteeForm.getSchool(), menteeForm.getGrade(), menteeForm.getSubject());
+        BasicInfo basicInfo = new BasicInfo(menteeForm.getPassword(), menteeForm.getSchool(), menteeForm.getGrade(), menteeForm.getSubject());
+        mentee.setID(menteeForm.getID());
         mentee.setName(menteeForm.getName());
         String serverUrl = getServerUrl(request);
         String profilePath =  serverUrl + "/images/";
@@ -88,7 +89,7 @@ public class MenteeController {
         for (Mentee mentee : mentees) {
             MobileMetee mobileMentee = new MobileMetee();
             mobileMentee.setIndex(mentee.getIndex());
-            mobileMentee.setID(mentee.getBasicInfo().getID());
+            mobileMentee.setID(mentee.getID());
             mobileMentee.setPassword(mentee.getBasicInfo().getPassword());
             mobileMentee.setName(mentee.getName());
             mobileMentee.setSchool(mentee.getBasicInfo().getSchool());

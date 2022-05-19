@@ -45,8 +45,9 @@ public class MentorController {
 
         Mentor mentor = new Mentor();
 
-        BasicInfo basicInfo = new BasicInfo(mentorForm.getID(), mentorForm.getPassword(), mentorForm.getSchool(), mentorForm.getGrade(), mentorForm.getSubject());
+        BasicInfo basicInfo = new BasicInfo( mentorForm.getPassword(), mentorForm.getSchool(), mentorForm.getGrade(), mentorForm.getSubject());
         mentor.setName(mentorForm.getName());
+        mentor.setID(mentorForm.getID());
         mentor.setCompany(mentorForm.getCompany());
         String serverUrl = getServerUrl(request);
 
@@ -139,7 +140,7 @@ public class MentorController {
         for (Mentor member : members) {
             MobileMentor mobileMember = new MobileMentor();
             mobileMember.setIndex(member.getIndex());
-            mobileMember.setID(member.getBasicInfo().getID());
+            mobileMember.setID(member.getID());
             mobileMember.setPassword(member.getBasicInfo().getPassword());
             mobileMember.setName(member.getName());
             mobileMember.setSchool(member.getBasicInfo().getSchool());

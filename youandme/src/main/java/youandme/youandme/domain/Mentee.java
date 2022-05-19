@@ -15,6 +15,8 @@ public class Mentee {
     @Column(name = "member_id")
     private Long index;
 
+    private String ID;
+
     private String name;
 
     @Embedded
