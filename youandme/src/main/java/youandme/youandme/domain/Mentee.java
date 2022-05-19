@@ -13,7 +13,7 @@ public class Mentee {
     
     @Id @GeneratedValue
     @Column(name = "member_id")
-    private Long id;
+    private Long index;
 
     private String name;
 

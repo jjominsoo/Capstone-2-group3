@@ -21,11 +21,11 @@ public class MenteeService {
     public Long join(Mentee mentee){
         validateDuplicateMentee(mentee);
         menteeRepository.save(mentee);
-        return mentee.getId();
+        return mentee.getIndex();
     }
 
     private void validateDuplicateMentee(Mentee mentee) {
-        List<Mentee> findMentees = menteeRepository.findName(mentee.getName());
+        List<Mentee> findMentees = menteeRepository.findName(mentee.getBasicInfo().getID());
         if(!findMentees.isEmpty()){
             throw new IllegalStateException("Already Exsisting ID!");
         }

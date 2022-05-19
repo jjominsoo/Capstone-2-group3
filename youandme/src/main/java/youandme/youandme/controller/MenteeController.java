@@ -87,7 +87,9 @@ public class MenteeController {
         List<MobileMetee> mobileMenteeList = new ArrayList<>();
         for (Mentee mentee : mentees) {
             MobileMetee mobileMentee = new MobileMetee();
-            mobileMentee.setID(mentee.getId());
+            mobileMentee.setIndex(mentee.getIndex());
+            mobileMentee.setID(mentee.getBasicInfo().getID());
+            mobileMentee.setPassword(mentee.getBasicInfo().getPassword());
             mobileMentee.setName(mentee.getName());
             mobileMentee.setSchool(mentee.getBasicInfo().getSchool());
             mobileMentee.setGrade(mentee.getBasicInfo().getGrade());

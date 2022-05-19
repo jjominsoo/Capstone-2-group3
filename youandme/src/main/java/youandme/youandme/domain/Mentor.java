@@ -14,7 +14,7 @@ public class Mentor {
 
     @Id @GeneratedValue
     @Column(name = "mentor_id")
-    private Long id;
+    private Long index;
 
     private String name;
 

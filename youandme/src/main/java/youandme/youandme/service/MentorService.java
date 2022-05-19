@@ -21,13 +21,13 @@ public class MentorService {
     public Long join(Mentor member){
         validateDuplicateMentor(member);
         memberRepository.save(member);
-        return member.getId();
+        return member.getIndex();
     }
 
     private void validateDuplicateMentor(Mentor member) {
-        List<Mentor> findMentors = memberRepository.findName(member.getName());
+        List<Mentor> findMentors = memberRepository.findName(member.getBasicInfo().getID());
         if(!findMentors.isEmpty()){
-            throw new IllegalStateException("Already exsisting customer!");
+            throw new IllegalStateException("Already exsisting ID!");
         }
     }
 

@@ -138,12 +138,13 @@ public class MentorController {
         List<MobileMentor> mobileMemberList = new ArrayList<>();
         for (Mentor member : members) {
             MobileMentor mobileMember = new MobileMentor();
-            mobileMember.setID(member.getId());
+            mobileMember.setIndex(member.getIndex());
+            mobileMember.setID(member.getBasicInfo().getID());
+            mobileMember.setPassword(member.getBasicInfo().getPassword());
             mobileMember.setName(member.getName());
             mobileMember.setSchool(member.getBasicInfo().getSchool());
             mobileMember.setGrade(member.getBasicInfo().getGrade());
             mobileMember.setSubject(member.getBasicInfo().getSubject());
-
             mobileMember.setProfileFilePath(member.getProfiles().getProfilePath()+member.getProfiles().getProfileName());
             mobileMember.setGraduationFilePath(member.getGraduationFiles().getGraduationFilePath()+member.getGraduationFiles().getGraduationFileName());
             mobileMember.setCompanyFilePath(member.getCompanyFiles().getCompanyFilePath()+member.getCompanyFiles().getCompanyFileName());
