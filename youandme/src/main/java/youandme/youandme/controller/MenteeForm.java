@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
 
 
 @Getter @Setter
-public class MeteeForm {
+public class MenteeForm {
 
     @NotEmpty(message = "회원 아이디는 필수입니다")
     private String ID;
@@ -18,7 +18,7 @@ public class MeteeForm {
     private String grade;
     private String subject;
 
-    private String profileName;
-    private String profilePath;
+    private String profileName = null;
+    private String profilePath = null;
 
 }

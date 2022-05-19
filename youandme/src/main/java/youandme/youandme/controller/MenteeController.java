@@ -36,23 +36,29 @@ public class MenteeController {
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/mentees/new")
     public String createForm(Model model) {
-        model.addAttribute("menteeForm", new MeteeForm());
+        model.addAttribute("menteeForm", new MenteeForm());
         return "mentees/createMenteeForm";
 
     }
 
     @CrossOrigin(origins = "*")
     @PostMapping("/mentees/new")
-    public String create(HttpServletRequest request, @Valid MeteeForm menteeForm, BindingResult result, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
+    public String create(HttpServletRequest request, @Valid MenteeForm menteeForm, BindingResult result, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
 
 
         if (result.hasErrors()) {
             return "mentees/createMenteeForm";
         }
         Mentee mentee = new Mentee();
-
+        System.out.println("==============================================================================");
         System.out.println("menteeFormName = " + menteeForm.getName());
         System.out.println("menteeFormID = " + menteeForm.getID());
+        System.out.println("menteeFormPWD = " + menteeForm.getPassword());
+        System.out.println("menteeFormPN = " + menteeForm.getProfileName());
+        System.out.println("menteeFormPP = " + menteeForm.getProfilePath());
+        System.out.println("profileOrigin = " + profile.getOriginalFilename());
+        System.out.println("==============================================================================");
+
 
         BasicInfo basicInfo = new BasicInfo(menteeForm.getPassword(), menteeForm.getSchool(), menteeForm.getGrade(), menteeForm.getSubject());
         mentee.setID(menteeForm.getID());
