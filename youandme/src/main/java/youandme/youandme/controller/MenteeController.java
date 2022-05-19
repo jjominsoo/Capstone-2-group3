@@ -43,7 +43,7 @@ public class MenteeController {
 
     @CrossOrigin(origins = "*")
     @PostMapping("/mentees/new")
-    public String create(HttpServletRequest request, @Valid MenteeForm menteeForm, BindingResult result, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
+    public String create(HttpServletRequest request, @Valid MenteeForm menteeForm, BindingResult result, @RequestParam(value = "aa", required = false) MultipartFile profile) throws IOException, NullPointerException{
 
 
         if (result.hasErrors()) {
