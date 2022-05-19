@@ -18,7 +18,7 @@ public class MenteeForm {
     private String grade;
     private String subject;
 
-    private String profileName = null;
-    private String profilePath = null;
+    private String profileName;
+    private String profilePath;
 
 }

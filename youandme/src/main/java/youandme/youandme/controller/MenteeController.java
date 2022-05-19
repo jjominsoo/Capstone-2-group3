@@ -56,34 +56,33 @@ public class MenteeController {
         System.out.println("menteeFormPWD = " + menteeForm.getPassword());
         System.out.println("menteeFormPN = " + menteeForm.getProfileName());
         System.out.println("menteeFormPP = " + menteeForm.getProfilePath());
-        if(profile.isEmpty()){
-            System.out.println("file is empty");
+        System.out.println("profile = " + profile);
+        if(profile != null){
+            System.out.println("profileOrigin = " + profile.getOriginalFilename());
+            System.out.println("==============================================================================");
+
+            BasicInfo basicInfo = new BasicInfo(menteeForm.getPassword(), menteeForm.getSchool(), menteeForm.getGrade(), menteeForm.getSubject());
+            mentee.setID(menteeForm.getID());
+            mentee.setName(menteeForm.getName());
+            String serverUrl = getServerUrl(request);
+            String profilePath =  serverUrl + "/images/";
+            String profileName =  UUID.randomUUID().toString()+"_"+profile.getOriginalFilename();
+
+            Profiles profiles = new Profiles(profile.getOriginalFilename(), profileName, profilePath);
+
+
+            Path saveProfilePath = Paths.get("./images/" + profileName);
+            profile.transferTo(saveProfilePath);
+
+
+
+            //mentee.setID(menteeForm.getID());
+            mentee.setBasicInfo(basicInfo);
+            mentee.setProfiles(profiles);
+            menteeService.join(mentee);
+
         }
-        System.out.println("profileOrigin = " + profile.getOriginalFilename());
-        System.out.println("==============================================================================");
-
-
-        BasicInfo basicInfo = new BasicInfo(menteeForm.getPassword(), menteeForm.getSchool(), menteeForm.getGrade(), menteeForm.getSubject());
-        mentee.setID(menteeForm.getID());
-        mentee.setName(menteeForm.getName());
-        String serverUrl = getServerUrl(request);
-        String profilePath =  serverUrl + "/images/";
-        String profileName =  UUID.randomUUID().toString()+"_"+profile.getOriginalFilename();
-
-        Profiles profiles = new Profiles(profile.getOriginalFilename(), profileName, profilePath);
-
-
-        Path saveProfilePath = Paths.get("./images/" + profileName);
-        profile.transferTo(saveProfilePath);
-
-
-
-        //mentee.setID(menteeForm.getID());
-        mentee.setBasicInfo(basicInfo);
-        mentee.setProfiles(profiles);
-        menteeService.join(mentee);
         return "redirect:/";
-
     }
 
     @GetMapping(value = "/mentees")
