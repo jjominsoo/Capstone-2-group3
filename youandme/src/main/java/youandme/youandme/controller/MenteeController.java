@@ -153,31 +153,31 @@ public class MenteeController {
 
     @ResponseBody
     @PostMapping("/mentees/join")
-    public MobileMentorJoinForm menteeJoin(HttpServletRequest request, @Valid MenteeJoinForm menteeJoinForm ){
-        MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
+    public MobileMenteeJoinForm menteeJoin(HttpServletRequest request, @Valid MenteeJoinForm menteeJoinForm ){
+        MobileMenteeJoinForm mobileMenteeJoinForm = new MobileMenteeJoinForm();
         List<Mentee> mentees = menteeService.findID(menteeJoinForm.getID());
 
         if(mentees.isEmpty()){
 //            return false;
             System.out.println("no such ID");
-            mobileMentorJoinForm.setStatus(false);
-            return mobileMentorJoinForm;
+            mobileMenteeJoinForm.setStatus(false);
+            return mobileMenteeJoinForm;
 
         }
         else if(!mentees.get(0).getBasicInfo().getPassword().equals(menteeJoinForm.getPassword())){
 //            return false;
             System.out.println("wrong password");
-            mobileMentorJoinForm.setStatus(false);
-            return mobileMentorJoinForm;
+            mobileMenteeJoinForm.setStatus(false);
+            return mobileMenteeJoinForm;
         }
 
-        mobileMentorJoinForm.setName(mentees.get(0).getName());
-        mobileMentorJoinForm.setGrade(mentees.get(0).getBasicInfo().getGrade());
-        mobileMentorJoinForm.setSchool(mentees.get(0).getBasicInfo().getSchool());
-        mobileMentorJoinForm.setSubject(mentees.get(0).getBasicInfo().getSubject());
-        mobileMentorJoinForm.setProfileFilePath(mentees.get(00).getProfiles().getProfilePath()+mentees.get(00).getProfiles().getProfileName());
-        mobileMentorJoinForm.setStatus(true);
+        mobileMenteeJoinForm.setName(mentees.get(0).getName());
+        mobileMenteeJoinForm.setGrade(mentees.get(0).getBasicInfo().getGrade());
+        mobileMenteeJoinForm.setSchool(mentees.get(0).getBasicInfo().getSchool());
+        mobileMenteeJoinForm.setSubject(mentees.get(0).getBasicInfo().getSubject());
+        mobileMenteeJoinForm.setProfileFilePath(mentees.get(0).getProfiles().getProfilePath()+mentees.get(00).getProfiles().getProfileName());
+        mobileMenteeJoinForm.setStatus(true);
 
-        return mobileMentorJoinForm;
+        return mobileMenteeJoinForm;
     }
 }
