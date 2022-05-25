@@ -115,13 +115,13 @@ public class MenteeController {
 
     @ResponseBody
     @GetMapping(value = "/menteeList")
-    public List<MobileMetee> menteeList(Model model){
+    public List<MobileMentee> menteeList(Model model){
 
         List<Mentee> mentees = menteeService.findMentees();
 
-        List<MobileMetee> mobileMenteeList = new ArrayList<>();
+        List<MobileMentee> mobileMenteeList = new ArrayList<>();
         for (Mentee mentee : mentees) {
-            MobileMetee mobileMentee = new MobileMetee();
+            MobileMentee mobileMentee = new MobileMentee();
             mobileMentee.setIndex(mentee.getIndex());
             mobileMentee.setID(mentee.getID());
             mobileMentee.setPassword(mentee.getBasicInfo().getPassword());
@@ -153,34 +153,31 @@ public class MenteeController {
 
     @ResponseBody
     @PostMapping("/mentees/join")
-    public MenteeForm menteeJoin(HttpServletRequest request, @Valid MenteeJoinForm menteeJoinForm ){
-        MenteeForm menteeForm = new MenteeForm();
+    public MobileMentorJoinForm menteeJoin(HttpServletRequest request, @Valid MenteeJoinForm menteeJoinForm ){
+        MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
         List<Mentee> mentees = menteeService.findID(menteeJoinForm.getID());
 
         if(mentees.isEmpty()){
 //            return false;
             System.out.println("no such ID");
-            menteeForm.setStatus(false);
-            return menteeForm;
+            mobileMentorJoinForm.setStatus(false);
+            return mobileMentorJoinForm;
 
         }
         else if(!mentees.get(0).getBasicInfo().getPassword().equals(menteeJoinForm.getPassword())){
 //            return false;
             System.out.println("wrong password");
-            menteeForm.setStatus(false);
-            return menteeForm;
+            mobileMentorJoinForm.setStatus(false);
+            return mobileMentorJoinForm;
         }
 
-        menteeForm.setID(mentees.get(0).getID());
-        menteeForm.setPassword(mentees.get(0).getBasicInfo().getPassword());
-        menteeForm.setName(mentees.get(0).getName());
-        menteeForm.setGrade(mentees.get(0).getBasicInfo().getGrade());
-        menteeForm.setSchool(mentees.get(0).getBasicInfo().getSchool());
-        menteeForm.setSubject(mentees.get(0).getBasicInfo().getSubject());
-        menteeForm.setProfileName(mentees.get(0).getProfiles().getProfileName());
-        menteeForm.setProfilePath(mentees.get(0).getProfiles().getProfilePath());
-        menteeForm.setStatus(true);
+        mobileMentorJoinForm.setName(mentees.get(0).getName());
+        mobileMentorJoinForm.setGrade(mentees.get(0).getBasicInfo().getGrade());
+        mobileMentorJoinForm.setSchool(mentees.get(0).getBasicInfo().getSchool());
+        mobileMentorJoinForm.setSubject(mentees.get(0).getBasicInfo().getSubject());
+        mobileMentorJoinForm.setProfileFilePath(mentees.get(00).getProfiles().getProfilePath()+mentees.get(00).getProfiles().getProfileName());
+        mobileMentorJoinForm.setStatus(true);
 
-        return menteeForm;
+        return mobileMentorJoinForm;
     }
 }

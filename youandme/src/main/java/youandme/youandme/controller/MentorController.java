@@ -47,9 +47,7 @@ public class MentorController {
         Mentor mentor = new Mentor();
 
         BasicInfo basicInfo = new BasicInfo( mentorForm.getPassword(), mentorForm.getSchool(), mentorForm.getGrade(), mentorForm.getSubject());
-        mentor.setName(mentorForm.getName());
-        mentor.setID(mentorForm.getID());
-        mentor.setCompany(mentorForm.getCompany());
+
         String serverUrl = getServerUrl(request);
 
         String ProfilePath =  serverUrl + "/images/";// + mentorForm.getID() +"/";
@@ -58,7 +56,6 @@ public class MentorController {
 
         Path saveProfilePath = Paths.get("./images/" + ProfileName);
         profile.transferTo(saveProfilePath);
-
 
         String GraduationPath =  serverUrl + "/graduation_certification/";//+ mentorForm.getID() +"/";
         String GraduationName =  UUID.randomUUID().toString()+"_"+graduation.getOriginalFilename();
@@ -74,44 +71,9 @@ public class MentorController {
         Path saveCompanyPath = Paths.get("./company_certification/" + CompanyName);
         company.transferTo(saveCompanyPath);
 
-
-
-
-
-
-//        List<String >fileOriNameList = new ArrayList<>();
-//        List<String >fileNameList = new ArrayList<>();
-//        List<String >filePathList = new ArrayList<>();
-
-//        for(MultipartFile file : multipartFile2) {
-//            System.out.println("file = " + file.getOriginalFilename());
-//            String fileName2 = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-//            //zzFiles2 files2 = new zzFilesList(file.getOriginalFilename(), fileName2, filePath2);
-//            fileOriNameList.add(file.getOriginalFilename());
-//            fileNameList.add(fileName2);
-//            filePathList.add(filePath2);
-//
-//            //fileList2 = new zzFileList(file.getOriginalFilename(),fileName2,filePath2);
-//            Path savePath2 = Paths.get("./certifications/" + fileName2);
-//            file.transferTo(savePath2);
-//            //mentor.setFiles2(files2);
-//            //mentor.setFileList(fileList2);
-//            //fileList2.show();
-//        }
-//        zzFileList fileList2 = new zzFileList(fileOriNameList,fileNameList,filePathList);
-//        fileList2.show();
-//        fileList2.getFileName3();
-
-            //이러면 마지막꺼만 저장되는거자나
-//        System.out.println("file = " + multipartFile2.get(0).getOriginalFilename());
-//        String fileName2 =  UUID.randomUUID().toString()+"_"+multipartFile2.get(0).getOriginalFilename();
-//        zzFiles2 files2 = new zzFiles2(multipartFile2.get(0).getOriginalFilename(),fileName2,filePath2);
-//        Path savePath2 = Paths.get("./certifications/" + fileName2);
-//        multipartFile2.get(0).transferTo(savePath2);
-//        mentor.setFiles2(files2);
-
-
-//        mentor.setName(mentorForm.getID());
+        mentor.setName(mentorForm.getName());
+        mentor.setID(mentorForm.getID());
+        mentor.setCompany(mentorForm.getCompany());
         mentor.setBasicInfo(basicInfo);
         mentor.setProfiles(profiles);
         mentor.setGraduationFiles(graduationFiles);
@@ -148,6 +110,7 @@ public class MentorController {
                 mobileMember.setSchool(mentor.getBasicInfo().getSchool());
                 mobileMember.setGrade(mentor.getBasicInfo().getGrade());
                 mobileMember.setSubject(mentor.getBasicInfo().getSubject());
+                mobileMember.setCompany(mentor.getCompany());
                 mobileMember.setProfileFilePath(mentor.getProfiles().getProfilePath() + mentor.getProfiles().getProfileName());
                 mobileMember.setGraduationFilePath(mentor.getGraduationFiles().getGraduationFilePath() + mentor.getGraduationFiles().getGraduationFileName());
                 mobileMember.setCompanyFilePath(mentor.getCompanyFiles().getCompanyFilePath() + mentor.getCompanyFiles().getCompanyFileName());
@@ -172,39 +135,31 @@ public class MentorController {
 
     @ResponseBody
     @PostMapping("/mentors/join")
-    public MentorForm mentorJoin(HttpServletRequest request, @Valid MentorJoinForm mentorJoinForm ){
-        MentorForm mentorForm = new MentorForm();
+    public MobileMentorJoinForm mentorJoin(HttpServletRequest request, @Valid MentorJoinForm mentorJoinForm ){
+        MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
         List<Mentor> mentors = mentorService.findID(mentorJoinForm.getID());
 
         if(mentors.isEmpty()){
-//            return false;
             System.out.println("no such ID");
-            mentorForm.setStatus(false);
-            return mentorForm;
+            mobileMentorJoinForm.setStatus(false);
+            return mobileMentorJoinForm;
 
         }
         else if(!mentors.get(0).getBasicInfo().getPassword().equals(mentorJoinForm.getPassword())){
-//            return false;
             System.out.println("wrong password");
-            mentorForm.setStatus(false);
-            return mentorForm;
+            mobileMentorJoinForm.setStatus(false);
+            return mobileMentorJoinForm;
         }
 
-        mentorForm.setID(mentors.get(0).getID());
-        mentorForm.setPassword(mentors.get(0).getBasicInfo().getPassword());
-        mentorForm.setName(mentors.get(0).getName());
-        mentorForm.setGrade(mentors.get(0).getBasicInfo().getGrade());
-        mentorForm.setSchool(mentors.get(0).getBasicInfo().getSchool());
-        mentorForm.setSubject(mentors.get(0).getBasicInfo().getSubject());
-        mentorForm.setProfileName(mentors.get(0).getProfiles().getProfileName());
-        mentorForm.setProfilePath(mentors.get(0).getProfiles().getProfilePath());
-//        mentorForm.setProfilePath(mentors.get(0).getGraduationFiles().getGraduationFileName());
-//        mentorForm.setProfilePath(mentors.get(0).getGraduationFiles().getGraduationFilePath());
-//        mentorForm.setProfilePath(mentors.get(0).getCompanyFiles().getCompanyFileName());
-//        mentorForm.setProfilePath(mentors.get(0).getCompanyFiles().getCompanyFilePath());
-        mentorForm.setStatus(true);
-        mentorForm.setPass(true);
+        mobileMentorJoinForm.setName(mentors.get(0).getName());
+        mobileMentorJoinForm.setGrade(mentors.get(0).getBasicInfo().getGrade());
+        mobileMentorJoinForm.setSchool(mentors.get(0).getBasicInfo().getSchool());
+        mobileMentorJoinForm.setSubject(mentors.get(0).getBasicInfo().getSubject());
+        mobileMentorJoinForm.setCompany(mentors.get(0).getCompany());
+        mobileMentorJoinForm.setProfileFilePath(mentors.get(0).getProfiles().getProfilePath() + mentors.get(0).getProfiles().getProfileName());
+        mobileMentorJoinForm.setStatus(true);
+        mobileMentorJoinForm.setPass(mentors.get(0).isPass());
 
-        return mentorForm;
+        return mobileMentorJoinForm;
     }
 }
