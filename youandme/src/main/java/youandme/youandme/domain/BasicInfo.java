@@ -23,4 +23,8 @@ public class BasicInfo {
         this.grade = grade;
         this.subject = subject;
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

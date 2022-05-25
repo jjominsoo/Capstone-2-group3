@@ -17,8 +17,9 @@ public class MenteeRepository {
         em.persist(mentee);
     }
 
-    public Mentee findOne(Long id){
-        return em.find(Mentee.class, id);
+    public Mentee findOne(Long index){
+        System.out.println("em.find(Mentee.class, index) = " + em.find(Mentee.class, index));
+        return em.find(Mentee.class, index);
     }
 
     public List<Mentee> findAll(){
@@ -26,9 +27,9 @@ public class MenteeRepository {
                 .getResultList();
     }
 
-    public List<Mentee> findName(String name){
-        return em.createQuery("select m from Mentee m where m.name = :name", Mentee.class)
-                .setParameter("name", name)
+    public List<Mentee> findID(String ID){
+        return em.createQuery("select m from Mentee m where m.ID = :ID", Mentee.class)
+                .setParameter("ID", ID)
                 .getResultList();
     }
 }

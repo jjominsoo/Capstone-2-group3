@@ -4,21 +4,7 @@
     ${mentor.fileListString}.replaceAll("\\[", "");
     ${mentor.fileListString}.replaceAll("\\]", "");
     ${mentor.fileListString}.replaceAll(" ", "");
-    $(function(){
-        if(1<2){
-            document.getElementById("pass").style.display = "none";
-            document.getElementById("non_pass").style.display = "";
-        }else{
-            document.getElementById("pass").style.display = "";
-            document.getElementById("non_pass").style.display = "none";
-        }
-    })
 </script>
-<style>
-    #non_pass{
-        display: none;
-    }
-</style>
 <head th:replace="fragments/header :: header" />
 <body>
 <div class="container">
@@ -28,8 +14,6 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>아이디</th>
-                <th>비밀번호</th>
                 <th>이름</th>
                 <th>학교</th>
                 <th>성적</th>
@@ -43,9 +27,6 @@
             <tbody>
             <!--            <img src="C:\Users\user\Desktop\java-spring\Capstone-2-group3-master2\Capstone-2-group3-master\youandme\youandme\src\main\resources\files\f04a9b2f-91cc-4ee1-a2aa-75b8d3f90bf4_image2.jpg" style="height:182px; width:352px" alt=""><td/><img src="resources/files/6be616e5-992c-4b5e-8e67-c25684ab3c0d_image2.jpg" style="height:182px; width:352px" alt=""><td/>-->
             <tr th:each="mentor : ${mentors}">
-
-                <td th:text="${mentor.ID}"></td>
-                <td th:text="${mentor.basicInfo?.password}"></td>
                 <td th:text="${mentor.Name}"></td>
                 <td th:text="${mentor.basicInfo?.school}"></td>
                 <td th:text="${mentor.basicInfo?.grade}"></td>
@@ -53,27 +34,8 @@
                 <td th:text="${mentor.company}"></td>
                 <td><img th:src="|${mentor.profiles?.profilePath}${mentor.profiles?.profileName}|" width="100" height="100" onclick="window.open(this.src)"/></td>
                 <td><img th:src="|${mentor.graduationFiles?.GraduationFilePath}${mentor.graduationFiles?.GraduationFileName}|" width="100" height="100" onclick="window.open(this.src)"/>
-                <img th:src="|${mentor.companyFiles?.CompanyFilePath}${mentor.companyFiles?.CompanyFileName}|" width="100" height="100" onclick="window.open(this.src)"/></td>
-<!--                <td><button th:onclick="aaa()">승인</button></td>-->
-
-                <td>
-                    <th:block th:if="${!mentor.isPass()}">
-                    <a href="#" th:onclick="aaa()" th:href="@{/mentors/{index}/edit (index=${mentor.index})}" class="btn btn-primary" role="button">승인</a>
-                    </th:block>
-                    <th:block th:if="${mentor.isPass()}">
-                    <a href="#" th:onclick="bbb()" th:href="@{/mentors/{index}/edit (index=${mentor.index})}" class="btn btn-primary" role="button">승인취소</a>
-                    </th:block>
-                </td>
-                <script>
-                    function aaa(){
-                        alert("승인되었습니다");
-                    }
-                    function bbb(){
-                        alert("승인취소되었습니다");
-                    }
-
-                </script>
-
+                    <img th:src="|${mentor.companyFiles?.CompanyFilePath}${mentor.companyFiles?.CompanyFileName}|" width="100" height="100" onclick="window.open(this.src)"/></td>
+                <!--                <td><button th:onclick="aaa()">승인</button></td>-->
 
             </tr>
             </tbody>

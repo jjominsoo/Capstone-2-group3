@@ -17,20 +17,15 @@ public class Mentor {
     private Long index;
 
     private String name;
-
     private String ID;
-
     private String company;
-
+    private boolean pass;
     @Embedded
     private BasicInfo basicInfo;
-
     @Embedded
     private Profiles profiles;
-
     @Embedded
     private GraduationFiles graduationFiles;
-
     @Embedded
     private CompanyFiles companyFiles;
 

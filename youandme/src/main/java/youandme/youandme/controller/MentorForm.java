@@ -29,7 +29,7 @@ public class MentorForm {
     private String companyFileName;
     private String companyFilePath;
 
-    //    private List<String> file_name2;
-//    private List<String> stored_file_path2;
+    private boolean status;
+    private boolean pass;
 
 }

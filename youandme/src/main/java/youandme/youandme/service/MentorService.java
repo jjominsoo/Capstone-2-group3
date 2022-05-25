@@ -1,5 +1,6 @@
 package youandme.youandme.service;
 
+import org.springframework.data.jpa.repository.Modifying;
 import youandme.youandme.domain.Mentor;
 import youandme.youandme.repository.MentorRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,30 +15,40 @@ import java.util.List;
 public class MentorService {
 
 
-    private final MentorRepository memberRepository;
+    private final MentorRepository mentorRepository;
 
     //회원가입
     @Transactional
-    public Long join(Mentor member){
-        validateDuplicateMentor(member);
-        memberRepository.save(member);
-        return member.getIndex();
+    public Long join(Mentor mentor){
+        validateDuplicateMentor(mentor);
+        mentorRepository.save(mentor);
+        return mentor.getIndex();
     }
 
-    private void validateDuplicateMentor(Mentor member) {
-        List<Mentor> findMentors = memberRepository.findName(member.getID());
+    @Modifying
+    @Transactional
+    public void resave(Mentor mentor){
+        mentorRepository.pass(mentor);
+    }
+
+
+    private void validateDuplicateMentor(Mentor mentor) {
+        List<Mentor> findMentors = mentorRepository.findID(mentor.getID());
+        System.out.println("findMentors = " + findMentors);
         if(!findMentors.isEmpty()){
-            throw new IllegalStateException("Already exsisting ID!");
+            throw new IllegalStateException("Already existing ID!");
         }
     }
 
     public List<Mentor> findMentors(){
-        return memberRepository.findAll();
+        return mentorRepository.findAll();
     }
 
-    public Mentor findOne(Long memberId){
-        return memberRepository.findOne(memberId);
+    public Mentor findOne(Long mentorId){
+        return mentorRepository.findOne(mentorId);
     }
 
-
+    public List<Mentor> findID(String menteeID){
+        return mentorRepository.findID(menteeID);
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import youandme.youandme.domain.*;
 import youandme.youandme.service.MentorService;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -134,23 +135,76 @@ public class MentorController {
     @ResponseBody
     @GetMapping(value = "/mentorList")
     public List<MobileMentor> mentorList(Model model){
-        List<Mentor> members = mentorService.findMentors();
+        List<Mentor> mentors = mentorService.findMentors();
 
         List<MobileMentor> mobileMemberList = new ArrayList<>();
-        for (Mentor member : members) {
-            MobileMentor mobileMember = new MobileMentor();
-            mobileMember.setIndex(member.getIndex());
-            mobileMember.setID(member.getID());
-            mobileMember.setPassword(member.getBasicInfo().getPassword());
-            mobileMember.setName(member.getName());
-            mobileMember.setSchool(member.getBasicInfo().getSchool());
-            mobileMember.setGrade(member.getBasicInfo().getGrade());
-            mobileMember.setSubject(member.getBasicInfo().getSubject());
-            mobileMember.setProfileFilePath(member.getProfiles().getProfilePath()+member.getProfiles().getProfileName());
-            mobileMember.setGraduationFilePath(member.getGraduationFiles().getGraduationFilePath()+member.getGraduationFiles().getGraduationFileName());
-            mobileMember.setCompanyFilePath(member.getCompanyFiles().getCompanyFilePath()+member.getCompanyFiles().getCompanyFileName());
-            mobileMemberList.add(mobileMember);
+        for (Mentor mentor : mentors) {
+            if(mentor.isPass()) {
+                MobileMentor mobileMember = new MobileMentor();
+                mobileMember.setIndex(mentor.getIndex());
+                mobileMember.setID(mentor.getID());
+                mobileMember.setPassword(mentor.getBasicInfo().getPassword());
+                mobileMember.setName(mentor.getName());
+                mobileMember.setSchool(mentor.getBasicInfo().getSchool());
+                mobileMember.setGrade(mentor.getBasicInfo().getGrade());
+                mobileMember.setSubject(mentor.getBasicInfo().getSubject());
+                mobileMember.setProfileFilePath(mentor.getProfiles().getProfilePath() + mentor.getProfiles().getProfileName());
+                mobileMember.setGraduationFilePath(mentor.getGraduationFiles().getGraduationFilePath() + mentor.getGraduationFiles().getGraduationFileName());
+                mobileMember.setCompanyFilePath(mentor.getCompanyFiles().getCompanyFilePath() + mentor.getCompanyFiles().getCompanyFileName());
+                mobileMemberList.add(mobileMember);
+            }
         }
         return mobileMemberList;
+    }
+
+    @GetMapping(value = "mentors/{mentor_id}/edit")
+    public String pass(@PathVariable("mentor_id") Long mentorId){
+        Mentor mentor = mentorService.findOne(mentorId);
+        if(!mentor.isPass()){
+            mentor.setPass(true);
+        }
+        else{
+            mentor.setPass(false);
+        }
+        mentorService.resave(mentor);
+        return "redirect:/mentors";
+    }
+
+    @ResponseBody
+    @PostMapping("/mentors/join")
+    public MentorForm mentorJoin(HttpServletRequest request, @Valid MentorJoinForm mentorJoinForm ){
+        MentorForm mentorForm = new MentorForm();
+        List<Mentor> mentors = mentorService.findID(mentorJoinForm.getID());
+
+        if(mentors.isEmpty()){
+//            return false;
+            System.out.println("no such ID");
+            mentorForm.setStatus(false);
+            return mentorForm;
+
+        }
+        else if(!mentors.get(0).getBasicInfo().getPassword().equals(mentorJoinForm.getPassword())){
+//            return false;
+            System.out.println("wrong password");
+            mentorForm.setStatus(false);
+            return mentorForm;
+        }
+
+        mentorForm.setID(mentors.get(0).getID());
+        mentorForm.setPassword(mentors.get(0).getBasicInfo().getPassword());
+        mentorForm.setName(mentors.get(0).getName());
+        mentorForm.setGrade(mentors.get(0).getBasicInfo().getGrade());
+        mentorForm.setSchool(mentors.get(0).getBasicInfo().getSchool());
+        mentorForm.setSubject(mentors.get(0).getBasicInfo().getSubject());
+        mentorForm.setProfileName(mentors.get(0).getProfiles().getProfileName());
+        mentorForm.setProfilePath(mentors.get(0).getProfiles().getProfilePath());
+//        mentorForm.setProfilePath(mentors.get(0).getGraduationFiles().getGraduationFileName());
+//        mentorForm.setProfilePath(mentors.get(0).getGraduationFiles().getGraduationFilePath());
+//        mentorForm.setProfilePath(mentors.get(0).getCompanyFiles().getCompanyFileName());
+//        mentorForm.setProfilePath(mentors.get(0).getCompanyFiles().getCompanyFilePath());
+        mentorForm.setStatus(true);
+        mentorForm.setPass(true);
+
+        return mentorForm;
     }
 }

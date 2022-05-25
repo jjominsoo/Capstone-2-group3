@@ -1,6 +1,7 @@
 package youandme.youandme.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import youandme.youandme.domain.Mentee;
 import youandme.youandme.domain.BasicInfo;
+import youandme.youandme.domain.Mentor;
 import youandme.youandme.domain.Profiles;
 import youandme.youandme.service.MenteeService;
 
@@ -26,12 +28,30 @@ import java.util.UUID;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class MenteeController {
 
+    @Autowired
     private final MenteeService menteeService;
 
 
     private String getServerUrl(HttpServletRequest request) {
         return new StringBuffer("http://").append(request.getServerName()).append(":").append(request.getServerPort()).toString();
     }
+
+//    @GetMapping("/login")
+//    public String login(Model model){
+//        model.addAttribute("menteeForm", new MenteeForm());
+//        return "login";
+//    }
+//
+//    @PostMapping("/login")
+//    public String loginId(HttpServletRequest request){
+//        Mentee mentee = new Mentee();
+//        mentee.setID(request.getParameter("ID"));
+//        mentee.BasicInfo.setPassword();
+//        if(menteeService.login(mentee){
+//            return "redirect:/";
+//        }
+//        return "login";
+//    }
 
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/mentees/new")
@@ -50,16 +70,16 @@ public class MenteeController {
             return "mentees/createMenteeForm";
         }
         Mentee mentee = new Mentee();
-        System.out.println("==============================================================================");
-        System.out.println("menteeFormName = " + menteeForm.getName());
-        System.out.println("menteeFormID = " + menteeForm.getID());
-        System.out.println("menteeFormPWD = " + menteeForm.getPassword());
-        System.out.println("menteeFormPN = " + menteeForm.getProfileName());
-        System.out.println("menteeFormPP = " + menteeForm.getProfilePath());
-        System.out.println("profile = " + profile);
+//        System.out.println("==============================================================================");
+//        System.out.println("menteeFormName = " + menteeForm.getName());
+//        System.out.println("menteeFormID = " + menteeForm.getID());
+//        System.out.println("menteeFormPWD = " + menteeForm.getPassword());
+//        System.out.println("menteeFormPN = " + menteeForm.getProfileName());
+//        System.out.println("menteeFormPP = " + menteeForm.getProfilePath());
+//        System.out.println("profile = " + profile);
         if(profile != null){
-            System.out.println("profileOrigin = " + profile.getOriginalFilename());
-            System.out.println("==============================================================================");
+//            System.out.println("profileOrigin = " + profile.getOriginalFilename());
+//            System.out.println("==============================================================================");
 
             BasicInfo basicInfo = new BasicInfo(menteeForm.getPassword(), menteeForm.getSchool(), menteeForm.getGrade(), menteeForm.getSubject());
             mentee.setID(menteeForm.getID());
@@ -88,6 +108,7 @@ public class MenteeController {
     @GetMapping(value = "/mentees")
     public String list(Model model){
         List<Mentee> mentees = menteeService.findMentees();
+//        System.out.println("mentees.get(0).getID() = " + mentees.get(0).getID());
         model.addAttribute("mentees",mentees);
         return "mentees/menteeList";
     }
@@ -113,5 +134,53 @@ public class MenteeController {
             mobileMenteeList.add(mobileMentee);
         }
         return mobileMenteeList;
+    }
+
+//    @GetMapping(value = "/matching")
+//    public String matching(Model model){
+//        model.addAttribute("menteeForm", new MenteeForm());
+//        return "matchings/createMatchingForm";
+//    }
+//
+//    @PostMapping("/matching")
+//    public String matchingList(HttpServletRequest request, @Valid MenteeForm menteeForm){
+//        Mentor mentor = new Mentor();
+//        System.out.println("menteeForm.getSchool() = " + menteeForm.getSchool());
+//        System.out.println("menteeForm.getGrade() = " + menteeForm.getGrade());
+//        System.out.println("menteeForm.getSubject() = " + menteeForm.getSubject());
+//        return "matchings/matchingList";
+//    }
+
+    @ResponseBody
+    @PostMapping("/mentees/join")
+    public MenteeForm menteeJoin(HttpServletRequest request, @Valid MenteeJoinForm menteeJoinForm ){
+        MenteeForm menteeForm = new MenteeForm();
+        List<Mentee> mentees = menteeService.findID(menteeJoinForm.getID());
+
+        if(mentees.isEmpty()){
+//            return false;
+            System.out.println("no such ID");
+            menteeForm.setStatus(false);
+            return menteeForm;
+
+        }
+        else if(!mentees.get(0).getBasicInfo().getPassword().equals(menteeJoinForm.getPassword())){
+//            return false;
+            System.out.println("wrong password");
+            menteeForm.setStatus(false);
+            return menteeForm;
+        }
+
+        menteeForm.setID(mentees.get(0).getID());
+        menteeForm.setPassword(mentees.get(0).getBasicInfo().getPassword());
+        menteeForm.setName(mentees.get(0).getName());
+        menteeForm.setGrade(mentees.get(0).getBasicInfo().getGrade());
+        menteeForm.setSchool(mentees.get(0).getBasicInfo().getSchool());
+        menteeForm.setSubject(mentees.get(0).getBasicInfo().getSubject());
+        menteeForm.setProfileName(mentees.get(0).getProfiles().getProfileName());
+        menteeForm.setProfilePath(mentees.get(0).getProfiles().getProfilePath());
+        menteeForm.setStatus(true);
+
+        return menteeForm;
     }
 }

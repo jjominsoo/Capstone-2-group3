@@ -21,4 +21,5 @@ public class MenteeForm {
     private String profileName;
     private String profilePath;
 
+    private boolean status;
 }

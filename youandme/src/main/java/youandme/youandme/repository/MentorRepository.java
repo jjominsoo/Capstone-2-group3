@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import youandme.youandme.domain.Mentor;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import java.util.List;
 
 @Repository
@@ -17,6 +18,10 @@ public class MentorRepository {
         em.persist(mentor);
     }
 
+    public void pass(Mentor mentor){
+        em.createQuery("update Mentor m set m.pass=true where m.index = :index")
+                .setParameter("index", mentor.getIndex());
+    }
     public Mentor findOne(Long id){
         return em.find(Mentor.class, id);
     }
@@ -26,9 +31,9 @@ public class MentorRepository {
                 .getResultList();
     }
 
-    public List<Mentor> findName(String name){
-        return em.createQuery("select m from Mentor m where m.name = :name", Mentor.class)
-                .setParameter("name", name)
+    public List<Mentor> findID(String ID){
+        return em.createQuery("select m from Mentor m where m.ID = :ID", Mentor.class)
+                .setParameter("ID", ID)
                 .getResultList();
     }
 }
