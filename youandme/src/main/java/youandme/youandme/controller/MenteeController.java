@@ -8,8 +8,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import youandme.youandme.domain.Mentee;
-import youandme.youandme.domain.BasicInfo;
-import youandme.youandme.domain.Mentor;
 import youandme.youandme.domain.Profiles;
 import youandme.youandme.service.MenteeService;
 
@@ -78,26 +76,21 @@ public class MenteeController {
 //        System.out.println("menteeFormPP = " + menteeForm.getProfilePath());
 //        System.out.println("profile = " + profile);
         if(profile != null){
-//            System.out.println("profileOrigin = " + profile.getOriginalFilename());
-//            System.out.println("==============================================================================");
 
-            BasicInfo basicInfo = new BasicInfo(menteeForm.getPassword(), menteeForm.getSchool(), menteeForm.getGrade(), menteeForm.getSubject());
             mentee.setID(menteeForm.getID());
+            mentee.setPassword(menteeForm.getPassword());
             mentee.setName(menteeForm.getName());
+            mentee.setSchool(menteeForm.getSchool());
+            mentee.setGrade(menteeForm.getGrade());
+            mentee.setSubject(menteeForm.getSubject());
+
             String serverUrl = getServerUrl(request);
             String profilePath =  serverUrl + "/images/";
             String profileName =  UUID.randomUUID().toString()+"_"+profile.getOriginalFilename();
-
             Profiles profiles = new Profiles(profile.getOriginalFilename(), profileName, profilePath);
-
-
             Path saveProfilePath = Paths.get("./images/" + profileName);
             profile.transferTo(saveProfilePath);
 
-
-
-            //mentee.setID(menteeForm.getID());
-            mentee.setBasicInfo(basicInfo);
             mentee.setProfiles(profiles);
             menteeService.join(mentee);
 
@@ -108,7 +101,6 @@ public class MenteeController {
     @GetMapping(value = "/mentees")
     public String list(Model model){
         List<Mentee> mentees = menteeService.findMentees();
-//        System.out.println("mentees.get(0).getID() = " + mentees.get(0).getID());
         model.addAttribute("mentees",mentees);
         return "mentees/menteeList";
     }
@@ -124,11 +116,11 @@ public class MenteeController {
             MobileMentee mobileMentee = new MobileMentee();
             mobileMentee.setIndex(mentee.getIndex());
             mobileMentee.setID(mentee.getID());
-            mobileMentee.setPassword(mentee.getBasicInfo().getPassword());
+            mobileMentee.setPassword(mentee.getPassword());
             mobileMentee.setName(mentee.getName());
-            mobileMentee.setSchool(mentee.getBasicInfo().getSchool());
-            mobileMentee.setGrade(mentee.getBasicInfo().getGrade());
-            mobileMentee.setSubject(mentee.getBasicInfo().getSubject());
+            mobileMentee.setSchool(mentee.getSchool());
+            mobileMentee.setGrade(mentee.getGrade());
+            mobileMentee.setSubject(mentee.getSubject());
             mobileMentee.setProfileFilePath(mentee.getProfiles().getProfilePath()+mentee.getProfiles().getProfileName());
 
             mobileMenteeList.add(mobileMentee);
@@ -158,24 +150,22 @@ public class MenteeController {
         List<Mentee> mentees = menteeService.findID(menteeJoinForm.getID());
 
         if(mentees.isEmpty()){
-//            return false;
             System.out.println("no such ID");
             mobileMenteeJoinForm.setStatus(false);
             return mobileMenteeJoinForm;
 
         }
-        else if(!mentees.get(0).getBasicInfo().getPassword().equals(menteeJoinForm.getPassword())){
-//            return false;
+        else if(!mentees.get(0).getPassword().equals(menteeJoinForm.getPassword())){
             System.out.println("wrong password");
             mobileMenteeJoinForm.setStatus(false);
             return mobileMenteeJoinForm;
         }
 
         mobileMenteeJoinForm.setName(mentees.get(0).getName());
-        mobileMenteeJoinForm.setGrade(mentees.get(0).getBasicInfo().getGrade());
-        mobileMenteeJoinForm.setSchool(mentees.get(0).getBasicInfo().getSchool());
-        mobileMenteeJoinForm.setSubject(mentees.get(0).getBasicInfo().getSubject());
-        mobileMenteeJoinForm.setProfileFilePath(mentees.get(0).getProfiles().getProfilePath()+mentees.get(00).getProfiles().getProfileName());
+        mobileMenteeJoinForm.setGrade(mentees.get(0).getGrade());
+        mobileMenteeJoinForm.setSchool(mentees.get(0).getSchool());
+        mobileMenteeJoinForm.setSubject(mentees.get(0).getSubject());
+        mobileMenteeJoinForm.setProfileFilePath(mentees.get(0).getProfiles().getProfilePath()+mentees.get(0).getProfiles().getProfileName());
         mobileMenteeJoinForm.setStatus(true);
 
         return mobileMenteeJoinForm;

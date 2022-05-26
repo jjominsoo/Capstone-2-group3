@@ -45,11 +45,11 @@
             <tr th:each="mentor : ${mentors}">
 
                 <td th:text="${mentor.ID}"></td>
-                <td th:text="${mentor.basicInfo?.password}"></td>
+                <td th:text="${mentor.password}"></td>
                 <td th:text="${mentor.Name}"></td>
-                <td th:text="${mentor.basicInfo?.school}"></td>
-                <td th:text="${mentor.basicInfo?.grade}"></td>
-                <td th:text="${mentor.basicInfo?.subject}"></td>
+                <td th:text="${mentor.school}"></td>
+                <td th:text="${mentor.grade}"></td>
+                <td th:text="${mentor.subject}"></td>
                 <td th:text="${mentor.company}"></td>
                 <td><img th:src="|${mentor.profiles?.profilePath}${mentor.profiles?.profileName}|" width="100" height="100" onclick="window.open(this.src)"/></td>
                 <td><img th:src="|${mentor.graduationFiles?.GraduationFilePath}${mentor.graduationFiles?.GraduationFileName}|" width="100" height="100" onclick="window.open(this.src)"/>

@@ -21,11 +21,11 @@
 
             <tr th:each="mentee : ${mentees}">
                 <td th:text="${mentee.ID}"></td>
-                <td th:text="${mentee.basicInfo?.password}"></td>
+                <td th:text="${mentee.password}"></td>
                 <td th:text="${mentee.Name}"></td>
-                <td th:text="${mentee.basicInfo?.school}"></td>
-                <td th:text="${mentee.basicInfo?.grade}"></td>
-                <td th:text="${mentee.basicInfo?.subject}"></td>
+                <td th:text="${mentee.school}"></td>
+                <td th:text="${mentee.grade}"></td>
+                <td th:text="${mentee.subject}"></td>
                 <td><img th:src="|${mentee.profiles?.profilePath}${mentee.profiles?.profileName}|" width="100" height="100" onclick="window.open(this.src)"/></td>
             </tr>
             </tbody>

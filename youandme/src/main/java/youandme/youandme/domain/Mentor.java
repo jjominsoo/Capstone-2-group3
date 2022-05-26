@@ -16,12 +16,17 @@ public class Mentor {
     @Column(name = "mentor_id")
     private Long index;
 
-    private String name;
+
     private String ID;
+    private String password;
+    private String name;
+    private String school;
+    private Float grade;
+    private String subject;
     private String company;
     private boolean pass;
-    @Embedded
-    private BasicInfo basicInfo;
+//    @Embedded
+//    private BasicInfo basicInfo;
     @Embedded
     private Profiles profiles;
     @Embedded
@@ -29,5 +34,5 @@ public class Mentor {
     @Embedded
     private CompanyFiles companyFiles;
 
-
+//    private String introduce;
 }

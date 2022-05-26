@@ -16,13 +16,14 @@ public class Mentee {
     private Long index;
 
     private String ID;
-
+    private String password;
     private String name;
-
-    @Embedded
-    private BasicInfo basicInfo;
+    private String school;
+    private Float grade;
+    private String subject;
 
     @Embedded
     private Profiles profiles;
 
+//    private String introduce;
 }

@@ -28,9 +28,9 @@
             <!--            <img src="C:\Users\user\Desktop\java-spring\Capstone-2-group3-master2\Capstone-2-group3-master\youandme\youandme\src\main\resources\files\f04a9b2f-91cc-4ee1-a2aa-75b8d3f90bf4_image2.jpg" style="height:182px; width:352px" alt=""><td/><img src="resources/files/6be616e5-992c-4b5e-8e67-c25684ab3c0d_image2.jpg" style="height:182px; width:352px" alt=""><td/>-->
             <tr th:each="mentor : ${mentors}">
                 <td th:text="${mentor.Name}"></td>
-                <td th:text="${mentor.basicInfo?.school}"></td>
-                <td th:text="${mentor.basicInfo?.grade}"></td>
-                <td th:text="${mentor.basicInfo?.subject}"></td>
+                <td th:text="${mentor.school}"></td>
+                <td th:text="${mentor.grade}"></td>
+                <td th:text="${mentor.subject}"></td>
                 <td th:text="${mentor.company}"></td>
                 <td><img th:src="|${mentor.profiles?.profilePath}${mentor.profiles?.profileName}|" width="100" height="100" onclick="window.open(this.src)"/></td>
                 <td><img th:src="|${mentor.graduationFiles?.GraduationFilePath}${mentor.graduationFiles?.GraduationFileName}|" width="100" height="100" onclick="window.open(this.src)"/>

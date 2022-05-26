@@ -11,7 +11,7 @@ public class MobileMentee {
     private String password;
     private String name;
     private String school;
-    private String grade;
+    private Float grade;
     private String subject;
     private String profileFilePath;
 

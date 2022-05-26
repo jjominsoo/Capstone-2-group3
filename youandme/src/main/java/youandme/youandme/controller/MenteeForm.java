@@ -15,7 +15,7 @@ public class MenteeForm {
     private String password;
     private String Name;
     private String school;
-    private String grade;
+    private Float grade;
     private String subject;
 
     private String profileName;

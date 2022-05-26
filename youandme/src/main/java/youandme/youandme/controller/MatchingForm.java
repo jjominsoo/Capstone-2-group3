@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class MatchingForm {
     private String school;
-    private String grade;
+    private Float grade;
     private String subject;
 
     //매칭을 위한 폼

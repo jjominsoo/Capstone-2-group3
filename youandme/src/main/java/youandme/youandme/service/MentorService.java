@@ -52,7 +52,7 @@ public class MentorService {
         return mentorRepository.findID(menteeID);
     }
 
-    public List<Mentor> findMatching(String school, String grade, String subject){
+    public List<Mentor> findMatching(String school, Float grade, String subject){
         return mentorRepository.findMatching(school, grade, subject);
     }
 

@@ -7,7 +7,7 @@ import lombok.Setter;
 public class MobileMentorJoinForm {
     private String name;
     private String school;
-    private String grade;
+    private Float grade;
     private String subject;
     private String company;
     private String profileFilePath;
