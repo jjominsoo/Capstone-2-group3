@@ -1,5 +1,6 @@
 package youandme.youandme.controller;
 
+import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -79,8 +80,6 @@ public class MentorController {
         mentor.setGraduationFiles(graduationFiles);
         mentor.setCompanyFiles(companyFiles);
 
-
-//        mentor.setFileList(fileList2);
         mentorService.join(mentor);
 
         return "redirect:/";
@@ -119,6 +118,8 @@ public class MentorController {
         }
         return mobileMemberList;
     }
+
+
 
     @GetMapping(value = "mentors/{mentor_id}/edit")
     public String pass(@PathVariable("mentor_id") Long mentorId){
@@ -162,4 +163,31 @@ public class MentorController {
 
         return mobileMentorJoinForm;
     }
+
+    //위에선 모든 멘토들 리스트 보낸거고 이제는 조건에 맞는 멘토들 받자.
+    @ResponseBody
+    @PostMapping("/mentorsMatchingList")
+    public List<MobileMentorJoinForm> mentorMatchingJoin(Model model, @Valid MatchingForm matchingForm){
+        List<Mentor> mentors = mentorService.findMatching(matchingForm.getSchool(), matchingForm.getGrade(), matchingForm.getSubject());
+        List<MobileMentorJoinForm> mobileMentorJoinFormsList = new ArrayList<>();
+        for(Mentor mentor : mentors){
+            if(mentor.isPass()) {
+                MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
+                mobileMentorJoinForm.setName(mentor.getName());
+                mobileMentorJoinForm.setSchool(mentor.getBasicInfo().getSchool());
+                mobileMentorJoinForm.setGrade(mentor.getBasicInfo().getGrade());
+                mobileMentorJoinForm.setSubject(mentor.getBasicInfo().getSubject());
+                mobileMentorJoinForm.setCompany(mentor.getCompany());
+                mobileMentorJoinForm.setProfileFilePath(mentor.getProfiles().getProfilePath()+mentor.getProfiles().getProfileName());
+                mobileMentorJoinForm.setPass(mentor.isPass());
+                mobileMentorJoinFormsList.add(mobileMentorJoinForm);
+            }
+        }
+        return mobileMentorJoinFormsList;
+    }
+
+
+
+
+
 }

@@ -36,4 +36,14 @@ public class MentorRepository {
                 .setParameter("ID", ID)
                 .getResultList();
     }
+
+    public List<Mentor> findMatching(String school, String grade, String subject){
+
+        return em.createQuery("select m from Mentor m where m.basicInfo.school = :school and m.basicInfo.grade = :grade and m.basicInfo.subject = :subject", Mentor.class)
+                .setParameter("school", school)
+                .setParameter("grade", grade)
+                .setParameter("subject", subject)
+                .getResultList();
+
+    }
 }

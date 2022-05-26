@@ -51,4 +51,9 @@ public class MentorService {
     public List<Mentor> findID(String menteeID){
         return mentorRepository.findID(menteeID);
     }
+
+    public List<Mentor> findMatching(String school, String grade, String subject){
+        return mentorRepository.findMatching(school, grade, subject);
+    }
+
 }
