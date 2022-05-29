@@ -168,7 +168,7 @@ public class MenteeController {
         }
 
         @ResponseBody
-        @GetMapping("/mentees/join")
+        @PostMapping("/mentees/join/chat")
         public Chat list2(@CookieValue(name = "mentee_id", required = false) Long mentee_id, String mentor, Model model, String text){
 //            public Chat list2(@CookieValue(name = "mentee_id", required = false) Cookie cookie, String mentor, Model model, String text){
 //            Chat chat = new Chat();
