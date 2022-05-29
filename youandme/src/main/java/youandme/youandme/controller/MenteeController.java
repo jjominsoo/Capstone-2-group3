@@ -167,42 +167,74 @@ public class MenteeController {
 
         }
 
-        @ResponseBody
-        @PostMapping("/mentees/join/chat")
-        public Chat list2(@CookieValue(name = "mentee_id", required = false) Long mentee_id, String mentor, Model model, String text){
-//            public Chat list2(@CookieValue(name = "mentee_id", required = false) Cookie cookie, String mentor, Model model, String text){
+//        @ResponseBody
+//        @PostMapping("/mentees/join/chat")
+//        public Chat list2(@CookieValue(name = "mentee_id", required = false) Long mentee_id, String mentor, Model model, String text){
 //            Chat chat = new Chat();
-//            Long mentee_id = Long.valueOf(cookie.getValue());
-            Chat chat = new Chat();
+//
+//            System.out.println("mentee_id = " + mentee_id);
+//            if(mentee_id == null){
+//                System.out.println("mentee id is null");
+//                return chat;
+//            }
+//
+//            Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
+//
+//            Mentee Sender = menteeService.findOne(mentee_id);
+//            Mentor Receiver = mentorService.findOne(mentor_id);
+//
+//            if(Sender == null || Receiver == null){
+//                System.out.println("no user");
+//                return chat;
+//            }
+//
+//
+//            chat.setSender_index(Sender.getIndex());
+//            chat.setReceiver_index(Receiver.getIndex());
+//            chat.setText(text);
+//            chat.setDate(LocalDateTime.now());
+//            model.addAttribute("mentee",Sender);
+//            model.addAttribute("mentor",Receiver);
+//            System.out.println("mentee_id = " + mentee_id);
+//            chatService.save(chat);
+//
+//            return chat;
+//        }
 
-            System.out.println("mentee_id = " + mentee_id);
-            if(mentee_id == null){
-                System.out.println("mentee id is null");
-                return chat;
-            }
-
-            Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
-
-            Mentee Sender = menteeService.findOne(mentee_id);
-            Mentor Receiver = mentorService.findOne(mentor_id);
-
-            if(Sender == null || Receiver == null){
-                System.out.println("no user");
-                return chat;
-            }
+    @ResponseBody
+    @PostMapping("/mentees/join/chat")
+    public Chat list2( String mentee, String mentor, Model model, String text){
+        Chat chat = new Chat();
 
 
-            chat.setSender_index(Sender.getIndex());
-            chat.setReceiver_index(Receiver.getIndex());
-            chat.setText(text);
-            chat.setDate(LocalDateTime.now());
-            model.addAttribute("mentee",Sender);
-            model.addAttribute("mentor",Receiver);
-            System.out.println("mentee_id = " + mentee_id);
-            chatService.save(chat);
-
+        if(mentee == null){
+            System.out.println("mentee id is null");
             return chat;
         }
+
+        Long mentee_id = menteeService.findID(mentee).get(0).getIndex();
+        Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
+
+        Mentee Sender = menteeService.findOne(mentee_id);
+        Mentor Receiver = mentorService.findOne(mentor_id);
+
+        if(Sender == null || Receiver == null){
+            System.out.println("no user");
+            return chat;
+        }
+
+
+        chat.setSender_index(Sender.getIndex());
+        chat.setReceiver_index(Receiver.getIndex());
+        chat.setText(text);
+        chat.setDate(LocalDateTime.now());
+        model.addAttribute("mentee",Sender);
+        model.addAttribute("mentor",Receiver);
+        System.out.println("mentee_id = " + mentee_id);
+        chatService.save(chat);
+
+        return chat;
+    }
 
         @ResponseBody
         @PostMapping("/mentees/join/logout")
