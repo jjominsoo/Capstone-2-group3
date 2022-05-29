@@ -12,7 +12,7 @@ import java.util.List;
 public class Mentee {
     
     @Id @GeneratedValue
-    @Column(name = "member_id")
+    @Column(name = "mentee_id")
     private Long index;
 
     private String ID;

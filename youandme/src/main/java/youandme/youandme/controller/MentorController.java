@@ -2,20 +2,26 @@ package youandme.youandme.controller;
 
 import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import youandme.youandme.domain.*;
+import youandme.youandme.service.ChatService;
+import youandme.youandme.service.MenteeService;
 import youandme.youandme.service.MentorService;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,8 +31,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MentorController {
 
+    @Autowired
     private final MentorService mentorService;
 
+    @Autowired
+    private final MenteeService menteeService;
+
+    @Autowired
+    private final ChatService chatService;
 
     private String getServerUrl(HttpServletRequest request) {
         return new StringBuffer("http://").append(request.getServerName()).append(":").append(request.getServerPort()).toString();
@@ -139,7 +151,7 @@ public class MentorController {
 
     @ResponseBody
     @PostMapping("/mentors/join")
-    public MobileMentorJoinForm mentorJoin(HttpServletRequest request, @Valid MentorJoinForm mentorJoinForm ){
+    public MobileMentorJoinForm mentorJoin(HttpServletResponse response, @Valid MentorJoinForm mentorJoinForm ){
         MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
         List<Mentor> mentors = mentorService.findID(mentorJoinForm.getID());
 
@@ -155,6 +167,7 @@ public class MentorController {
             return mobileMentorJoinForm;
         }
 
+        mobileMentorJoinForm.setIndex(mentors.get(0).getIndex());
         mobileMentorJoinForm.setName(mentors.get(0).getName());
         mobileMentorJoinForm.setGrade(mentors.get(0).getGrade());
         mobileMentorJoinForm.setSchool(mentors.get(0).getSchool());
@@ -164,30 +177,95 @@ public class MentorController {
         mobileMentorJoinForm.setStatus(true);
         mobileMentorJoinForm.setPass(mentors.get(0).isPass());
 
+        Cookie idCookie = new Cookie("mentor_id", String.valueOf(mentors.get(0).getIndex()));
+        response.addCookie(idCookie);
         return mobileMentorJoinForm;
     }
 
-    //위에선 모든 멘토들 리스트 보낸거고 이제는 조건에 맞는 멘토들 받자.
     @ResponseBody
-    @PostMapping("/mentorsMatchingList")
-    public List<MobileMentorJoinForm> mentorMatchingJoin(Model model, @Valid MatchingForm matchingForm){
-        List<Mentor> mentors = mentorService.findMatching(matchingForm.getSchool(), matchingForm.getGrade(), matchingForm.getSubject());
-        List<MobileMentorJoinForm> mobileMentorJoinFormsList = new ArrayList<>();
-        for(Mentor mentor : mentors){
-            if(mentor.isPass()) {
-                MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
-                mobileMentorJoinForm.setName(mentor.getName());
-                mobileMentorJoinForm.setSchool(mentor.getSchool());
-                mobileMentorJoinForm.setGrade(mentor.getGrade());
-                mobileMentorJoinForm.setSubject(mentor.getSubject());
-                mobileMentorJoinForm.setCompany(mentor.getCompany());
-                mobileMentorJoinForm.setProfileFilePath(mentor.getProfiles().getProfilePath()+mentor.getProfiles().getProfileName());
-                mobileMentorJoinForm.setPass(mentor.isPass());
-                mobileMentorJoinFormsList.add(mobileMentorJoinForm);
-            }
+    @GetMapping("/mentors/join")
+    public Chat list2(@CookieValue(name = "mentor_id", required = false) Cookie cookie, Long mentee_id, Model model, String text){
+        //왜 갑자기 쿠키를 못받지?
+        Chat chat = new Chat();
+        Long mentor_id = Long.valueOf(cookie.getValue());
+        System.out.println("mentor_id = " + mentor_id);
+        if(mentor_id == null){
+            System.out.println("mentor id is null");
+            return chat;
         }
-        return mobileMentorJoinFormsList;
+
+        Mentor Sender = mentorService.findOne(mentor_id);
+        Mentee Receiver = menteeService.findOne(mentee_id);
+
+        if(Sender == null || Receiver == null){
+            System.out.println("no user");
+            return chat;
+        }
+
+
+        chat.setSender_index(Sender.getIndex());
+        chat.setReceiver_index(Receiver.getIndex());
+        chat.setText(text);
+        chat.setDate(LocalDateTime.now());
+        model.addAttribute("mentor",Sender);
+        model.addAttribute("mentee",Receiver);
+        System.out.println("mentor_id = " + mentor_id);
+        chatService.save(chat);
+
+        return chat;
     }
+
+    @ResponseBody
+    @PostMapping("/mentors/join/logout")
+    public String logout(HttpServletResponse response){
+        Cookie cookie = new Cookie("mentor_id", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return "home";
+    }
+
+    @ResponseBody
+    @GetMapping("/mentors/join/chat")
+    public List<Chat> chat(@CookieValue(name = "mentor_id", required = false) Long mentor_id, Model model){
+
+        List<Chat> chat = new ArrayList<>();
+
+
+        if(mentor_id == null){
+            System.out.println("mentor id is null");
+            return chat;
+        }
+
+        List<Chat> whatISend = chatService.findSender(mentor_id);
+        List<Chat> whatIReceived = chatService.findReceiver(mentor_id);
+
+        for (Chat chat1 : whatISend){
+            Chat chatting = new Chat();
+            chatting.setChat_num(chat1.getChat_num());
+            chatting.setSender_index(chat1.getSender_index());
+            chatting.setReceiver_index(chat1.getReceiver_index());
+            chatting.setText(chat1.getText());
+            chatting.setDate(chat1.getDate());
+            chat.add(chatting);
+        }
+
+        for (Chat chat2 : whatIReceived){
+            Chat chatting = new Chat();
+            chatting.setChat_num(chat2.getChat_num());
+            chatting.setSender_index(chat2.getSender_index());
+            chatting.setReceiver_index(chat2.getReceiver_index());
+            chatting.setText(chat2.getText());
+            chatting.setDate(chat2.getDate());
+            chat.add(chatting);
+        }
+        //나중에 객체만들자
+        return chat;
+    }
+
+    //위에선 모든 멘토들 리스트 보낸거고 이제는 조건에 맞는 멘토들 받자.
+
+    //비록 기능자체는 mentee를 사용하지만 mentor에 관한 내용이므로 여기다 놨다.
+
 
 
 

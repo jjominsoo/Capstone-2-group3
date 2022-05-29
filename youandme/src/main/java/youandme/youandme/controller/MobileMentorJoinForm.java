@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter @Setter
 public class MobileMentorJoinForm {
+    private Long index;
     private String name;
     private String school;
     private Float grade;

@@ -18,7 +18,6 @@ public class MenteeRepository {
     }
 
     public Mentee findOne(Long index){
-        System.out.println("em.find(Mentee.class, index) = " + em.find(Mentee.class, index));
         return em.find(Mentee.class, index);
     }
 
@@ -33,3 +32,4 @@ public class MenteeRepository {
                 .getResultList();
     }
 }
+

@@ -48,8 +48,8 @@ public class MentorService {
         return mentorRepository.findOne(mentorId);
     }
 
-    public List<Mentor> findID(String menteeID){
-        return mentorRepository.findID(menteeID);
+    public List<Mentor> findID(String mentorID){
+        return mentorRepository.findID(mentorID);
     }
 
     public List<Mentor> findMatching(String school, Float grade, String subject){

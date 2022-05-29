@@ -41,11 +41,13 @@ public class MentorRepository {
 
         return em.createQuery("select m from Mentor m where m.school = :school and m.grade between :grade1 and :grade2 and m.subject = :subject", Mentor.class)
                 .setParameter("school", school)
-                .setParameter("grade1", grade -1)
+                .setParameter("grade1", grade-1)
                 .setParameter("grade2", grade+1)
 
                 //소숫점 단위로 영역화가 불가능? grade-0.5하면 안됨
-
+                //10을 곱해서 정수로 만들어버리자
+                
+                
                 //앱에서 학교 : 서울대 / 연세대 / 고려대 / 중앙대 .. 이런식으로 리스트를 주고 거기서 선택하도록 하고
                 //과목도 마찬가지로 : 건축학과 / 간호학과 / 컴퓨터공학과 .. 이런식으로 하면 찾기 편할듯
                .setParameter("subject", subject)
