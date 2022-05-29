@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.net.CookieManager;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -163,14 +164,17 @@ public class MenteeController {
             response.addCookie(idCookie);
             System.out.println("idCookie = " + idCookie.getValue());
             return mobileMenteeJoinForm;
+
         }
 
         @ResponseBody
         @GetMapping("/mentees/join")
-        public Chat list2(@CookieValue(name = "mentee_id", required = false) Cookie cookie, String mentor, Model model, String text){
-
+        public Chat list2(@CookieValue(name = "mentee_id", required = false) Long mentee_id, String mentor, Model model, String text){
+//            public Chat list2(@CookieValue(name = "mentee_id", required = false) Cookie cookie, String mentor, Model model, String text){
+//            Chat chat = new Chat();
+//            Long mentee_id = Long.valueOf(cookie.getValue());
             Chat chat = new Chat();
-            Long mentee_id = Long.valueOf(cookie.getValue());
+
             System.out.println("mentee_id = " + mentee_id);
             if(mentee_id == null){
                 System.out.println("mentee id is null");
