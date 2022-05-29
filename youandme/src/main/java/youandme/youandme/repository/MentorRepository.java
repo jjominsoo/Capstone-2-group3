@@ -38,11 +38,11 @@ public class MentorRepository {
     }
 
     public List<Mentor> findMatching(String school, Float grade, String subject){
-
+        grade = grade*10;
         return em.createQuery("select m from Mentor m where m.school = :school and m.grade between :grade1 and :grade2 and m.subject = :subject", Mentor.class)
                 .setParameter("school", school)
-                .setParameter("grade1", grade-1)
-                .setParameter("grade2", grade+1)
+                .setParameter("grade1", grade-5)
+                .setParameter("grade2", grade+5)
 
                 //소숫점 단위로 영역화가 불가능? grade-0.5하면 안됨
                 //10을 곱해서 정수로 만들어버리자

@@ -1,6 +1,7 @@
 package youandme.youandme.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,23 +48,6 @@ public class MenteeController {
             return new StringBuffer("http://").append(request.getServerName()).append(":").append(request.getServerPort()).toString();
         }
 
-    //    @GetMapping("/login")
-    //    public String login(Model model){
-    //        model.addAttribute("menteeForm", new MenteeForm());
-    //        return "login";
-    //    }
-    //
-    //    @PostMapping("/login")
-    //    public String loginId(HttpServletRequest request){
-    //        Mentee mentee = new Mentee();
-    //        mentee.setID(request.getParameter("ID"));
-    //        mentee.BasicInfo.setPassword();
-    //        if(menteeService.login(mentee){
-    //            return "redirect:/";
-    //        }
-    //        return "login";
-    //    }
-
         @CrossOrigin(origins = "*")
         @GetMapping(value = "/mentees/new")
         public String createForm(Model model) {
@@ -81,13 +65,7 @@ public class MenteeController {
                 return "mentees/createMenteeForm";
             }
             Mentee mentee = new Mentee();
-    //        System.out.println("==============================================================================");
-    //        System.out.println("menteeFormName = " + menteeForm.getName());
-    //        System.out.println("menteeFormID = " + menteeForm.getID());
-    //        System.out.println("menteeFormPWD = " + menteeForm.getPassword());
-    //        System.out.println("menteeFormPN = " + menteeForm.getProfileName());
-    //        System.out.println("menteeFormPP = " + menteeForm.getProfilePath());
-    //        System.out.println("profile = " + profile);
+
             if(profile != null){
 
                 mentee.setID(menteeForm.getID());
@@ -277,27 +255,39 @@ public class MenteeController {
     //    // 멘티의 likelist에 해당 멘토의 index넘버를 넣는다.
     //
 
-    @ResponseBody
-    @PostMapping("/mentorsMatchingList")
-    public List<MobileMentorJoinForm> mentorMatchingJoin(Model model, @Valid MatchingForm matchingForm){
-        List<Mentor> mentors = mentorService.findMatching(matchingForm.getSchool(), matchingForm.getGrade(), matchingForm.getSubject());
+        @ResponseBody
+        @PostMapping("/mentees/join/modify")
+        public Mentee modifyMentee(@CookieValue(name = "mentee_id", required = false) Long mentee_id, HttpServletRequest request, @Valid MenteeForm menteeForm, BindingResult result, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
 
-        List<MobileMentorJoinForm> mobileMentorJoinFormsList = new ArrayList<>();
-        for(Mentor mentor : mentors){
-            if(mentor.isPass()) {
-                MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
-                mobileMentorJoinForm.setIndex(mentor.getIndex());
-                mobileMentorJoinForm.setName(mentor.getName());
-                mobileMentorJoinForm.setSchool(mentor.getSchool());
-                mobileMentorJoinForm.setGrade(mentor.getGrade());
-                mobileMentorJoinForm.setSubject(mentor.getSubject());
-                mobileMentorJoinForm.setCompany(mentor.getCompany());
-                mobileMentorJoinForm.setProfileFilePath(mentor.getProfiles().getProfilePath()+mentor.getProfiles().getProfileName());
-                mobileMentorJoinForm.setPass(mentor.isPass());
-                mobileMentorJoinFormsList.add(mobileMentorJoinForm);
-            }
+            Mentee oldMentee = menteeService.findOne(mentee_id);
+            Mentee newMentee = new Mentee();
+            BeanUtils.copyProperties(oldMentee,newMentee);
+            newMentee.setName(oldMentee.getName());
+            return newMentee;
+
         }
-        return mobileMentorJoinFormsList;
-    }
+
+        @ResponseBody
+        @PostMapping("/mentorsMatchingList")
+        public List<MobileMentorJoinForm> mentorMatchingJoin(Model model, @Valid MatchingForm matchingForm){
+            List<Mentor> mentors = mentorService.findMatching(matchingForm.getSchool(), matchingForm.getGrade(), matchingForm.getSubject());
+
+            List<MobileMentorJoinForm> mobileMentorJoinFormsList = new ArrayList<>();
+            for(Mentor mentor : mentors){
+                if(mentor.isPass()) {
+                    MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
+                    mobileMentorJoinForm.setIndex(mentor.getIndex());
+                    mobileMentorJoinForm.setName(mentor.getName());
+                    mobileMentorJoinForm.setSchool(mentor.getSchool());
+                    mobileMentorJoinForm.setGrade(mentor.getGrade());
+                    mobileMentorJoinForm.setSubject(mentor.getSubject());
+                    mobileMentorJoinForm.setCompany(mentor.getCompany());
+                    mobileMentorJoinForm.setProfileFilePath(mentor.getProfiles().getProfilePath()+mentor.getProfiles().getProfileName());
+                    mobileMentorJoinForm.setPass(mentor.isPass());
+                    mobileMentorJoinFormsList.add(mobileMentorJoinForm);
+                }
+            }
+            return mobileMentorJoinFormsList;
+        }
 }
 

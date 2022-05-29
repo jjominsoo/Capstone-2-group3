@@ -22,4 +22,6 @@ public class MenteeForm {
     private String profilePath;
 
     private boolean status;
+
+    private String introduce;
 }

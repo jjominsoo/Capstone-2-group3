@@ -25,5 +25,5 @@ public class Mentee {
     @Embedded
     private Profiles profiles;
 
-//    private String introduce;
+    private String introduce;
 }
