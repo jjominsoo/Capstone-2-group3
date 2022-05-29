@@ -230,11 +230,100 @@ public class MenteeController {
         chat.setDate(LocalDateTime.now());
         model.addAttribute("mentee",Sender);
         model.addAttribute("mentor",Receiver);
-        System.out.println("mentee_id = " + mentee_id);
         chatService.save(chat);
 
         return chat;
     }
+
+
+//        @ResponseBody
+//        @GetMapping("/mentees/join/chat")
+//        public List<Chat> chat(@CookieValue(name = "mentee_id", required = false) Long mentee_id, Model model){
+//
+//            List<Chat> chat = new ArrayList<>();
+//
+//
+//            if(mentee_id == null){
+//                System.out.println("mentee id is null");
+//                return chat;
+//            }
+//
+//            List<Chat> whatISend = chatService.findSender(mentee_id);
+//            List<Chat> whatIReceived = chatService.findReceiver(mentee_id);
+//
+//            System.out.println("whatISend = " + whatISend);
+//            for (Chat chat1 : whatISend){
+//                Chat chatting = new Chat();
+//                chatting.setChat_num(chat1.getChat_num());
+//                chatting.setSender_index(chat1.getSender_index());
+//                chatting.setReceiver_index(chat1.getReceiver_index());
+//                chatting.setText(chat1.getText());
+//                chatting.setDate(chat1.getDate());
+//                chat.add(chatting);
+//            }
+//
+//            for (Chat chat2 : whatIReceived){
+//                Chat chatting = new Chat();
+//                chatting.setChat_num(chat2.getChat_num());
+//                chatting.setSender_index(chat2.getSender_index());
+//                chatting.setReceiver_index(chat2.getReceiver_index());
+//                chatting.setText(chat2.getText());
+//                chatting.setDate(chat2.getDate());
+//                chat.add(chatting);
+//            }
+//            //나중에 객체만들자
+//            return chat;
+//        }
+
+
+    @ResponseBody
+    @GetMapping("/mentees/join/chat")
+    public List<Chat> chat(String mentee, Model model){
+
+        List<Chat> chat = new ArrayList<>();
+
+
+        if(mentee == null){
+            System.out.println("mentee id is null");
+            return chat;
+        }
+
+        Long mentee_id = menteeService.findID(mentee).get(0).getIndex();
+
+        List<Chat> whatISend = chatService.findSender(mentee_id);
+        List<Chat> whatIReceived = chatService.findReceiver(mentee_id);
+
+        System.out.println("whatISend = " + whatISend);
+        for (Chat chat1 : whatISend){
+            Chat chatting = new Chat();
+            chatting.setChat_num(chat1.getChat_num());
+            chatting.setSender_index(chat1.getSender_index());
+            chatting.setReceiver_index(chat1.getReceiver_index());
+            chatting.setText(chat1.getText());
+            chatting.setDate(chat1.getDate());
+            chat.add(chatting);
+        }
+
+        for (Chat chat2 : whatIReceived){
+            Chat chatting = new Chat();
+            chatting.setChat_num(chat2.getChat_num());
+            chatting.setSender_index(chat2.getSender_index());
+            chatting.setReceiver_index(chat2.getReceiver_index());
+            chatting.setText(chat2.getText());
+            chatting.setDate(chat2.getDate());
+            chat.add(chatting);
+        }
+        //나중에 객체만들자
+        return chat;
+    }
+
+    //    @ResponseBody
+    //    @PostMapping("/like")
+    //    public
+    //    // 멘티입장에서 멘토 좌우 드래그 할때
+    //    // 멘티의 likelist에 해당 멘토의 index넘버를 넣는다.
+    //
+
 
         @ResponseBody
         @PostMapping("/mentees/join/logout")
@@ -244,52 +333,6 @@ public class MenteeController {
             response.addCookie(cookie);
             return "home";
         }
-
-
-        @ResponseBody
-        @GetMapping("/mentees/join/chat")
-        public List<Chat> chat(@CookieValue(name = "mentee_id", required = false) Long mentee_id, Model model){
-
-            List<Chat> chat = new ArrayList<>();
-
-
-            if(mentee_id == null){
-                System.out.println("mentee id is null");
-                return chat;
-            }
-
-            List<Chat> whatISend = chatService.findSender(mentee_id);
-            List<Chat> whatIReceived = chatService.findReceiver(mentee_id);
-
-            System.out.println("whatISend = " + whatISend);
-            for (Chat chat1 : whatISend){
-                Chat chatting = new Chat();
-                chatting.setChat_num(chat1.getChat_num());
-                chatting.setSender_index(chat1.getSender_index());
-                chatting.setReceiver_index(chat1.getReceiver_index());
-                chatting.setText(chat1.getText());
-                chatting.setDate(chat1.getDate());
-                chat.add(chatting);
-            }
-
-            for (Chat chat2 : whatIReceived){
-                Chat chatting = new Chat();
-                chatting.setChat_num(chat2.getChat_num());
-                chatting.setSender_index(chat2.getSender_index());
-                chatting.setReceiver_index(chat2.getReceiver_index());
-                chatting.setText(chat2.getText());
-                chatting.setDate(chat2.getDate());
-                chat.add(chatting);
-            }
-            //나중에 객체만들자
-            return chat;
-        }
-    //    @ResponseBody
-    //    @PostMapping("/like")
-    //    public
-    //    // 멘티입장에서 멘토 좌우 드래그 할때
-    //    // 멘티의 likelist에 해당 멘토의 index넘버를 넣는다.
-    //
 
         @ResponseBody
         @PostMapping("/mentees/join/modify")
