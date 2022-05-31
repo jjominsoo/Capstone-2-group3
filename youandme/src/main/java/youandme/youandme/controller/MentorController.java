@@ -182,17 +182,54 @@ public class MentorController {
         return mobileMentorJoinForm;
     }
 
+//    @ResponseBody
+//    @PostMapping("/mentors/join/chat")
+//    public Chat list2(@CookieValue(name = "mentor_id", required = false) Cookie cookie, Long mentee_id, Model model, String text){
+//
+//        //왜 갑자기 쿠키를 못받지?
+//        Chat chat = new Chat();
+//        Long mentor_id = Long.valueOf(cookie.getValue());
+//        System.out.println("mentor_id = " + mentor_id);
+//        if(mentor_id == null){
+//            System.out.println("mentor id is null");
+//            return chat;
+//        }
+//
+//        Mentor Sender = mentorService.findOne(mentor_id);
+//        Mentee Receiver = menteeService.findOne(mentee_id);
+//
+//        if(Sender == null || Receiver == null){
+//            System.out.println("no user");
+//            return chat;
+//        }
+//
+//
+//        chat.setSender_index(Sender.getIndex());
+//        chat.setReceiver_index(Receiver.getIndex());
+//        chat.setText(text);
+//        chat.setDate(LocalDateTime.now());
+//        model.addAttribute("mentor",Sender);
+//        model.addAttribute("mentee",Receiver);
+//        System.out.println("mentor_id = " + mentor_id);
+//        chatService.save(chat);
+//
+//        return chat;
+//    }
+
     @ResponseBody
-    @GetMapping("/mentors/join")
-    public Chat list2(@CookieValue(name = "mentor_id", required = false) Cookie cookie, Long mentee_id, Model model, String text){
+    @PostMapping("/mentors/join/chat")
+    public Chat list2(String mentor , String mentee, Model model, String text){
+
         //왜 갑자기 쿠키를 못받지?
         Chat chat = new Chat();
-        Long mentor_id = Long.valueOf(cookie.getValue());
-        System.out.println("mentor_id = " + mentor_id);
-        if(mentor_id == null){
+
+        if(mentor == null){
             System.out.println("mentor id is null");
             return chat;
         }
+
+        Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
+        Long mentee_id = menteeService.findID(mentee).get(0).getIndex();
 
         Mentor Sender = mentorService.findOne(mentor_id);
         Mentee Receiver = menteeService.findOne(mentee_id);
@@ -224,17 +261,61 @@ public class MentorController {
         return "home";
     }
 
+
+    //위에선 모든 멘토들 리스트 보낸거고 이제는 조건에 맞는 멘토들 받자.
+
+    //비록 기능자체는 mentee를 사용하지만 mentor에 관한 내용이므로 여기다 놨다.
+//    @ResponseBody
+//    @GetMapping("/mentors/join/chat")
+//    public List<Chat> chat(@CookieValue(name = "mentor_id", required = false) Long mentor_id, Model model){
+//
+//        List<Chat> chat = new ArrayList<>();
+//
+//
+//        if(mentor_id == null){
+//            System.out.println("mentor id is null");
+//            return chat;
+//        }
+//
+//        List<Chat> whatISend = chatService.findSender(mentor_id);
+//        List<Chat> whatIReceived = chatService.findReceiver(mentor_id);
+//
+//        for (Chat chat1 : whatISend){
+//            Chat chatting = new Chat();
+//            chatting.setChat_num(chat1.getChat_num());
+//            chatting.setSender_index(chat1.getSender_index());
+//            chatting.setReceiver_index(chat1.getReceiver_index());
+//            chatting.setText(chat1.getText());
+//            chatting.setDate(chat1.getDate());
+//            chat.add(chatting);
+//        }
+//
+//        for (Chat chat2 : whatIReceived){
+//            Chat chatting = new Chat();
+//            chatting.setChat_num(chat2.getChat_num());
+//            chatting.setSender_index(chat2.getSender_index());
+//            chatting.setReceiver_index(chat2.getReceiver_index());
+//            chatting.setText(chat2.getText());
+//            chatting.setDate(chat2.getDate());
+//            chat.add(chatting);
+//        }
+//        //나중에 객체만들자
+//        return chat;
+//    }
+
     @ResponseBody
     @GetMapping("/mentors/join/chat")
-    public List<Chat> chat(@CookieValue(name = "mentor_id", required = false) Long mentor_id, Model model){
+    public List<Chat> chat(String mentor, Model model){
 
         List<Chat> chat = new ArrayList<>();
 
 
-        if(mentor_id == null){
+        if(mentor == null){
             System.out.println("mentor id is null");
             return chat;
         }
+
+        Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
 
         List<Chat> whatISend = chatService.findSender(mentor_id);
         List<Chat> whatIReceived = chatService.findReceiver(mentor_id);
@@ -261,11 +342,6 @@ public class MentorController {
         //나중에 객체만들자
         return chat;
     }
-
-    //위에선 모든 멘토들 리스트 보낸거고 이제는 조건에 맞는 멘토들 받자.
-
-    //비록 기능자체는 mentee를 사용하지만 mentor에 관한 내용이므로 여기다 놨다.
-
 
 
 
