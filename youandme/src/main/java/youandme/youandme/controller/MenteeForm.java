@@ -23,5 +23,4 @@ public class MenteeForm {
 
     private boolean status;
 
-    private String introduce;
 }

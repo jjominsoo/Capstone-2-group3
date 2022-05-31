@@ -34,5 +34,7 @@ public class Mentor {
     @Embedded
     private CompanyFiles companyFiles;
 
+    private String shortIntroduce;
+    private String longIntroduce;
 //    private String introduce;
 }

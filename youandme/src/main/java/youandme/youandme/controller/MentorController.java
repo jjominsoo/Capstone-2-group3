@@ -94,6 +94,20 @@ public class MentorController {
         mentor.setGraduationFiles(graduationFiles);
         mentor.setCompanyFiles(companyFiles);
 
+        if(!mentorForm.getShortIntroduce().isEmpty()){
+            mentor.setShortIntroduce(mentorForm.getShortIntroduce());
+        }
+        else {
+            mentor.setShortIntroduce("안녕하세요 "+ mentorForm.getName() +"입니다");
+        }
+
+        if(!mentorForm.getLongIntroduce().isEmpty()){
+            mentor.setLongIntroduce(mentorForm.getLongIntroduce());
+        }
+        else {
+            mentor.setLongIntroduce("안녕하세요 "+mentorForm.getName() +"입니다");
+        }
+
         mentorService.join(mentor);
 
         return "redirect:/";
@@ -115,20 +129,22 @@ public class MentorController {
         List<MobileMentor> mobileMemberList = new ArrayList<>();
         for (Mentor mentor : mentors) {
             if(mentor.isPass()) {
-                MobileMentor mobileMember = new MobileMentor();
+                MobileMentor mobileMentor = new MobileMentor();
 
-                mobileMember.setIndex(mentor.getIndex());
-                mobileMember.setID(mentor.getID());
-                mobileMember.setPassword(mentor.getPassword());
-                mobileMember.setName(mentor.getName());
-                mobileMember.setSchool(mentor.getSchool());
-                mobileMember.setGrade(mentor.getGrade());
-                mobileMember.setSubject(mentor.getSubject());
-                mobileMember.setCompany(mentor.getCompany());
-                mobileMember.setProfileFilePath(mentor.getProfiles().getProfilePath() + mentor.getProfiles().getProfileName());
-                mobileMember.setGraduationFilePath(mentor.getGraduationFiles().getGraduationFilePath() + mentor.getGraduationFiles().getGraduationFileName());
-                mobileMember.setCompanyFilePath(mentor.getCompanyFiles().getCompanyFilePath() + mentor.getCompanyFiles().getCompanyFileName());
-                mobileMemberList.add(mobileMember);
+                mobileMentor.setIndex(mentor.getIndex());
+                mobileMentor.setID(mentor.getID());
+                mobileMentor.setPassword(mentor.getPassword());
+                mobileMentor.setName(mentor.getName());
+                mobileMentor.setSchool(mentor.getSchool());
+                mobileMentor.setGrade(mentor.getGrade());
+                mobileMentor.setSubject(mentor.getSubject());
+                mobileMentor.setCompany(mentor.getCompany());
+                mobileMentor.setProfileFilePath(mentor.getProfiles().getProfilePath() + mentor.getProfiles().getProfileName());
+                mobileMentor.setGraduationFilePath(mentor.getGraduationFiles().getGraduationFilePath() + mentor.getGraduationFiles().getGraduationFileName());
+                mobileMentor.setCompanyFilePath(mentor.getCompanyFiles().getCompanyFilePath() + mentor.getCompanyFiles().getCompanyFileName());
+                mobileMentor.setShortIntroduce(mentor.getShortIntroduce());
+                mobileMentor.setLongIntroduce(mentor.getLongIntroduce());
+                mobileMemberList.add(mobileMentor);
             }
         }
         return mobileMemberList;
@@ -176,9 +192,11 @@ public class MentorController {
         mobileMentorJoinForm.setProfileFilePath(mentors.get(0).getProfiles().getProfilePath() + mentors.get(0).getProfiles().getProfileName());
         mobileMentorJoinForm.setStatus(true);
         mobileMentorJoinForm.setPass(mentors.get(0).isPass());
+        mobileMentorJoinForm.setShortIntroduce(mentors.get(0).getShortIntroduce());
+        mobileMentorJoinForm.setLongIntroduce(mentors.get(0).getLongIntroduce());
 
-        Cookie idCookie = new Cookie("mentor_id", String.valueOf(mentors.get(0).getIndex()));
-        response.addCookie(idCookie);
+//        Cookie idCookie = new Cookie("mentor_id", String.valueOf(mentors.get(0).getIndex()));
+//        response.addCookie(idCookie);
         return mobileMentorJoinForm;
     }
 

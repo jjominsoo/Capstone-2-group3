@@ -32,4 +32,7 @@ public class MentorForm {
     private boolean status;
     private boolean pass;
 
+    private String shortIntroduce;
+    private String longIntroduce;
+
 }

@@ -17,4 +17,6 @@ public class MobileMentor {
     private String profileFilePath;
     private String graduationFilePath;
     private String companyFilePath;
+    private String shortIntroduce;
+    private String longIntroduce;
 }
