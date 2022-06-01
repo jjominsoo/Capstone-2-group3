@@ -25,6 +25,11 @@ public class LikeService {
     }
 
     @Transactional
+    public List<Like> findLike(Long mentee_index){
+        return likeRepository.findLike(mentee_index);
+    }
+
+    @Transactional
     public List<Like> findLiked(Long mentee_index){
 
         return likeRepository.findLiked(mentee_index);

@@ -19,9 +19,16 @@ public class LikeRepository {
         em.persist(like);
     }
 
-    public List<Like> findLiked(Long mentee_index){
+    public List<Like> findLike(Long mentee_index){
         return em.createQuery("select m from Like m where m.mentee_index = :mentee_index", Like.class)
                 .setParameter("mentee_index", mentee_index)
+                .getResultList();
+    }
+
+
+    public List<Like> findLiked(Long mentor_index){
+        return em.createQuery("select m from Like m where m.mentor_index = :mentor_index", Like.class)
+                .setParameter("mentor_index", mentor_index)
                 .getResultList();
     }
 

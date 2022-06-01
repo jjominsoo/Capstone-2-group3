@@ -38,9 +38,7 @@ public class MentorRepository {
 
     public List<Mentor> findMatching(String school, Float grade, String subject){
         float grade1 = (float) (grade - 0.5);
-        System.out.println("grade1 = " + grade1);
         float grade2 = (float) (grade + 0.5);
-        System.out.println("grade2 = " + grade2);
         return em.createQuery("select m from Mentor m where m.school = :school and m.grade between :grade1 and :grade2 and m.subject = :subject", Mentor.class)
                 .setParameter("school", school)
                 .setParameter("grade1", grade1)

@@ -155,8 +155,6 @@ public class MenteeController {
             like.setMentee_index(mentee_id);
             like.setMentor_index(mentor_id);
 
-            System.out.println("like.getMentee_index() = " + like.getMentee_index());
-//            likeListService.save(likeList);
             likeService.save(like);
 
 
@@ -180,9 +178,19 @@ public class MenteeController {
                 mobileMentorJoinForm.setCompany (likedMentor.getCompany());
                 mobileMentorJoinForm.setProfileFilePath (likedMentor.getProfiles().getProfilePath() + likedMentor.getProfiles().getProfileName());
                 mobileMentorJoinForm.setPass (likedMentor.isPass());
-                mobileMentorJoinForm.setShortIntroduce (likedMentor.getShortIntroduce());
-                mobileMentorJoinForm.setLongIntroduce (likedMentor.getLongIntroduce());
+                if(!likedMentor.getShortIntroduce().isEmpty()){
+                    mobileMentorJoinForm.setShortIntroduce(likedMentor.getShortIntroduce());
+                }
+                else {
+                    mobileMentorJoinForm.setShortIntroduce("안녕하세요 "+ likedMentor.getName() +"입니다");
+                }
 
+                if(!likedMentor.getLongIntroduce().isEmpty()){
+                    mobileMentorJoinForm.setLongIntroduce(likedMentor.getLongIntroduce());
+                }
+                else {
+                    mobileMentorJoinForm.setLongIntroduce("안녕하세요 "+likedMentor.getName() +"입니다");
+                }
                 mentorList.add(mobileMentorJoinForm);
             }
 
@@ -216,48 +224,24 @@ public class MenteeController {
                 mobileMentorJoinForm.setCompany (likedMentor.getCompany());
                 mobileMentorJoinForm.setProfileFilePath (likedMentor.getProfiles().getProfilePath() + likedMentor.getProfiles().getProfileName());
                 mobileMentorJoinForm.setPass (likedMentor.isPass());
-                mobileMentorJoinForm.setShortIntroduce (likedMentor.getShortIntroduce());
-                mobileMentorJoinForm.setLongIntroduce (likedMentor.getLongIntroduce());
+                if(!likedMentor.getShortIntroduce().isEmpty()){
+                    mobileMentorJoinForm.setShortIntroduce(likedMentor.getShortIntroduce());
+                }
+                else {
+                    mobileMentorJoinForm.setShortIntroduce("안녕하세요 "+ likedMentor.getName() +"입니다");
+                }
 
+                if(!likedMentor.getLongIntroduce().isEmpty()){
+                    mobileMentorJoinForm.setLongIntroduce(likedMentor.getLongIntroduce());
+                }
+                else {
+                    mobileMentorJoinForm.setLongIntroduce("안녕하세요 "+likedMentor.getName() +"입니다");
+                }
                 mentorList.add(mobileMentorJoinForm);
             }
             return mentorList;
         }
 
-
-//        @ResponseBody
-//        @PostMapping("/mentees/join/chat")
-//        public Chat list2(@CookieValue(name = "mentee_id", required = false) Long mentee_id, String mentor, Model model, String text){
-//            Chat chat = new Chat();
-//
-//            System.out.println("mentee_id = " + mentee_id);
-//            if(mentee_id == null){
-//                System.out.println("mentee id is null");
-//                return chat;
-//            }
-//
-//            Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
-//
-//            Mentee Sender = menteeService.findOne(mentee_id);
-//            Mentor Receiver = mentorService.findOne(mentor_id);
-//
-//            if(Sender == null || Receiver == null){
-//                System.out.println("no user");
-//                return chat;
-//            }
-//
-//
-//            chat.setSender_index(Sender.getIndex());
-//            chat.setReceiver_index(Receiver.getIndex());
-//            chat.setText(text);
-//            chat.setDate(LocalDateTime.now());
-//            model.addAttribute("mentee",Sender);
-//            model.addAttribute("mentor",Receiver);
-//            System.out.println("mentee_id = " + mentee_id);
-//            chatService.save(chat);
-//
-//            return chat;
-//        }
 
     @ResponseBody
     @PostMapping("/mentees/join/chat")
@@ -294,48 +278,6 @@ public class MenteeController {
     }
 
 
-//        @ResponseBody
-//        @GetMapping("/mentees/join/chat")
-//        public List<Chat> chat(@CookieValue(name = "mentee_id", required = false) Long mentee_id, Model model){
-//
-//            List<Chat> chat = new ArrayList<>();
-//
-//
-//            if(mentee_id == null){
-//                System.out.println("mentee id is null");
-//                return chat;
-//            }
-//
-//            List<Chat> whatISend = chatService.findSender(mentee_id);
-//            List<Chat> whatIReceived = chatService.findReceiver(mentee_id);
-//
-//            System.out.println("whatISend = " + whatISend);
-//            for (Chat chat1 : whatISend){
-//                Chat chatting = new Chat();
-//                chatting.setChat_num(chat1.getChat_num());
-//                chatting.setSender_index(chat1.getSender_index());
-//                chatting.setReceiver_index(chat1.getReceiver_index());
-//                chatting.setText(chat1.getText());
-//                chatting.setDate(chat1.getDate());
-//                chat.add(chatting);
-//            }
-//
-//            for (Chat chat2 : whatIReceived){
-//                Chat chatting = new Chat();
-//                chatting.setChat_num(chat2.getChat_num());
-//                chatting.setSender_index(chat2.getSender_index());
-//                chatting.setReceiver_index(chat2.getReceiver_index());
-//                chatting.setText(chat2.getText());
-//                chatting.setDate(chat2.getDate());
-//                chat.add(chatting);
-//            }
-//            //나중에 객체만들자
-//            return chat;
-//        }
-
-
-
-
     @ResponseBody
     @GetMapping("/mentees/join/chat")
     public List<Chat> chat(String mentee, Model model){
@@ -352,8 +294,6 @@ public class MenteeController {
 
         List<Chat> whatISend = chatService.findSender(mentee_id);
         List<Chat> whatIReceived = chatService.findReceiver(mentee_id);
-        ArrayList allMessage = new ArrayList<>();
-
 
         System.out.println("whatISend = " + whatISend);
         for (Chat chat1 : whatISend){
@@ -401,15 +341,6 @@ public class MenteeController {
 
 
     @ResponseBody
-    @PostMapping("/mentees/join/logout")
-    public String logout(HttpServletResponse response){
-        Cookie cookie = new Cookie("mentee_id", null);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
-        return "home";
-    }
-
-    @ResponseBody
     @PostMapping("/mentees/join/modify")
     public Mentee modifyMentee(String mentee, HttpServletRequest request, @Valid MenteeForm menteeForm, BindingResult result, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
         System.out.println("mentee = " + mentee);
@@ -444,7 +375,7 @@ public class MenteeController {
 
     @ResponseBody
     @GetMapping("/mentorsMatchingList")
-    public List<MobileMentorJoinForm> mentorMatchingJoin(Model model, @Valid MatchingForm matchingForm){
+    public List<MobileMentorJoinForm> mentorMatchingList(Model model, @Valid MatchingForm matchingForm){
         List<Mentor> mentors = mentorService.findMatching(matchingForm.getSchool(), matchingForm.getGrade(), matchingForm.getSubject());
 
 
@@ -464,10 +395,60 @@ public class MenteeController {
                 mobileMentorJoinForm.setCompany(mentor.getCompany());
                 mobileMentorJoinForm.setProfileFilePath(mentor.getProfiles().getProfilePath()+mentor.getProfiles().getProfileName());
                 mobileMentorJoinForm.setPass(mentor.isPass());
+                if(!mentor.getShortIntroduce().isEmpty()){
+                    mobileMentorJoinForm.setShortIntroduce(mentor.getShortIntroduce());
+                }
+                else {
+                    mobileMentorJoinForm.setShortIntroduce("안녕하세요 "+ mentor.getName() +"입니다");
+                }
+
+                if(!mentor.getLongIntroduce().isEmpty()){
+                    mobileMentorJoinForm.setLongIntroduce(mentor.getLongIntroduce());
+                }
+                else {
+                    mobileMentorJoinForm.setLongIntroduce("안녕하세요 "+mentor.getName() +"입니다");
+                }
                 mobileMentorJoinFormsList.add(mobileMentorJoinForm);
             }
         }
         return mobileMentorJoinFormsList;
+    }
+
+    @ResponseBody
+    @GetMapping("/mentees/likeList")
+    public List<MobileMentorJoinForm> mentorLikeList(String mentee){
+            List<MobileMentorJoinForm> mentorLikeList= new ArrayList<>();
+            Long mentee_id = menteeService.findID(mentee).get(0).getIndex();
+
+            List<Like> whoILiked = likeService.findLike(mentee_id);
+            for(Like like : whoILiked){
+                MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
+                Mentor mentor = mentorService.findOne(like.getMentor_index());
+                mobileMentorJoinForm.setIndex(mentor.getIndex());
+                mobileMentorJoinForm.setIndex(mentor.getIndex());
+                mobileMentorJoinForm.setName(mentor.getName());
+                mobileMentorJoinForm.setSchool(mentor.getSchool());
+                mobileMentorJoinForm.setGrade(mentor.getGrade());
+                mobileMentorJoinForm.setSubject(mentor.getSubject());
+                mobileMentorJoinForm.setCompany(mentor.getCompany());
+                mobileMentorJoinForm.setProfileFilePath(mentor.getProfiles().getProfilePath()+mentor.getProfiles().getProfileName());
+                mobileMentorJoinForm.setPass(mentor.isPass());
+                if(!mentor.getShortIntroduce().isEmpty()){
+                    mobileMentorJoinForm.setShortIntroduce(mentor.getShortIntroduce());
+                }
+                else {
+                    mobileMentorJoinForm.setShortIntroduce("안녕하세요 "+ mentor.getName() +"입니다");
+                }
+
+                if(!mentor.getLongIntroduce().isEmpty()){
+                    mobileMentorJoinForm.setLongIntroduce(mentor.getLongIntroduce());
+                }
+                else {
+                    mobileMentorJoinForm.setLongIntroduce("안녕하세요 "+mentor.getName() +"입니다");
+                }
+                mentorLikeList.add(mobileMentorJoinForm);
+            }
+            return mentorLikeList;
     }
 
 }

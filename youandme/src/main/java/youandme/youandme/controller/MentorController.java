@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import youandme.youandme.domain.*;
 import youandme.youandme.service.ChatService;
+import youandme.youandme.service.LikeService;
 import youandme.youandme.service.MenteeService;
 import youandme.youandme.service.MentorService;
 
@@ -22,9 +23,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @Controller
@@ -39,6 +38,9 @@ public class MentorController {
 
     @Autowired
     private final ChatService chatService;
+
+    @Autowired
+    private final LikeService likeService;
 
     private String getServerUrl(HttpServletRequest request) {
         return new StringBuffer("http://").append(request.getServerName()).append(":").append(request.getServerPort()).toString();
@@ -357,8 +359,25 @@ public class MentorController {
             chatting.setDate(chat2.getDate());
             chat.add(chatting);
         }
+
+        Comparator2 comp = new Comparator2();
+        Collections.sort(chat,comp);
         //나중에 객체만들자
         return chat;
+    }
+    class Comparator2 implements Comparator<Chat> {
+        @Override
+        public int compare(Chat o1, Chat o2) {
+            Long firstIndex = o1.getChat_num();
+            Long secondIndex = o2.getChat_num();
+
+            if(firstIndex > secondIndex){
+                return 0;
+            }
+            else{
+                return -1;
+            }
+        }
     }
 
     @ResponseBody
@@ -376,8 +395,19 @@ public class MentorController {
             newMentor.setGrade(mentorForm.getGrade());
             newMentor.setSubject(mentorForm.getSubject());
             newMentor.setCompany(mentorForm.getCompany());
-            newMentor.setShortIntroduce(mentorForm.getShortIntroduce());
-            newMentor.setLongIntroduce(mentorForm.getLongIntroduce());
+            if(!mentorForm.getShortIntroduce().isEmpty()){
+                newMentor.setShortIntroduce(mentorForm.getShortIntroduce());
+            }
+            else {
+                newMentor.setShortIntroduce("안녕하세요 "+ mentorForm.getName() +"입니다");
+            }
+
+            if(!mentorForm.getLongIntroduce().isEmpty()){
+                newMentor.setLongIntroduce(mentorForm.getLongIntroduce());
+            }
+            else {
+                newMentor.setLongIntroduce("안녕하세요 "+mentorForm.getName() +"입니다");
+            }
             String serverUrl = getServerUrl(request);
             String profilePath =  serverUrl + "/images/";
             String profileName =  UUID.randomUUID().toString()+"_"+profile.getOriginalFilename();
@@ -395,7 +425,26 @@ public class MentorController {
 
     }
 
+    @ResponseBody
+    @GetMapping("/mentors/likedList")
+    public List<MobileMenteeJoinForm> mentorLikedList(String mentor){
+        List<MobileMenteeJoinForm> menteeLikeList= new ArrayList<>();
+        Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
 
+        List<Like> LikedByWhom = likeService.findLiked(mentor_id);
+        for(Like like : LikedByWhom){
+            MobileMenteeJoinForm mobileMenteeJoinForm = new MobileMenteeJoinForm();
+            Mentee mentee = menteeService.findOne(like.getMentee_index());
+            mobileMenteeJoinForm.setIndex(mentee.getIndex());
+            mobileMenteeJoinForm.setName(mentee.getName());
+            mobileMenteeJoinForm.setSchool(mentee.getSchool());
+            mobileMenteeJoinForm.setGrade(mentee.getGrade());
+            mobileMenteeJoinForm.setSubject(mentee.getSubject());
+            mobileMenteeJoinForm.setProfileFilePath(mentee.getProfiles().getProfilePath()+mentee.getProfiles().getProfileName());
+            menteeLikeList.add(mobileMenteeJoinForm);
+        }
+        return menteeLikeList;
+    }
 
 
 }
