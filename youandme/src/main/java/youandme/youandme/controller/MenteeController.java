@@ -171,6 +171,7 @@ public class MenteeController {
                 MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
                 Mentor likedMentor = mentorService.findOne(like.getMentor_index());
                 mobileMentorJoinForm.setIndex(likedMentor.getIndex());
+                mobileMentorJoinForm.setID(likedMentor.getID());
                 mobileMentorJoinForm.setName (likedMentor.getName());
                 mobileMentorJoinForm.setSchool (likedMentor.getSchool());
                 mobileMentorJoinForm.setGrade (likedMentor.getGrade());
@@ -217,6 +218,7 @@ public class MenteeController {
                 MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
                 Mentor likedMentor = mentorService.findOne(like.getMentor_index());
                 mobileMentorJoinForm.setIndex(likedMentor.getIndex());
+                mobileMentorJoinForm.setID(likedMentor.getID());
                 mobileMentorJoinForm.setName (likedMentor.getName());
                 mobileMentorJoinForm.setSchool (likedMentor.getSchool());
                 mobileMentorJoinForm.setGrade (likedMentor.getGrade());
@@ -388,6 +390,7 @@ public class MenteeController {
             if(mentor.isPass()) {
                 MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
                 mobileMentorJoinForm.setIndex(mentor.getIndex());
+                mobileMentorJoinForm.setID(mentor.getID());
                 mobileMentorJoinForm.setName(mentor.getName());
                 mobileMentorJoinForm.setSchool(mentor.getSchool());
                 mobileMentorJoinForm.setGrade(mentor.getGrade());
@@ -425,7 +428,7 @@ public class MenteeController {
                 MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
                 Mentor mentor = mentorService.findOne(like.getMentor_index());
                 mobileMentorJoinForm.setIndex(mentor.getIndex());
-                mobileMentorJoinForm.setIndex(mentor.getIndex());
+                mobileMentorJoinForm.setID(mentor.getID());
                 mobileMentorJoinForm.setName(mentor.getName());
                 mobileMentorJoinForm.setSchool(mentor.getSchool());
                 mobileMentorJoinForm.setGrade(mentor.getGrade());
