@@ -1,17 +1,28 @@
-<!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header" />
-  <meta charset="UTF-8">
 
-  <title>로그인</title>
+
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+  <title>Login</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-로그인입니다.
-
-<form method="post" action="/login" th:object = "${menteeForm}" >
-  ID :<input type="text" name="ID"><br>
-  PASSWORD :<input type="text" name="password"><br>
-  <button type="submit">제출</button>
-</form>
+<div class="container">
+  <div th:replace="fragments/bodyHeader :: bodyHeader" />
+  <div class="jumbotron">
+    <h1>너랑나랑은</h1>
+    <p class="lead">관리자 로그인</p>
+    <p>
+<!--      <a class="btn btn-lg btn-secondary" href="/mentees/new">멘티 가입</a>-->
+<!--      <a class="btn btn-lg btn-secondary" href="/mentees">멘티 목록</a>-->
+      <form method="post" action="/login" th:object = "${adminForm}" >
+        <p>ID :<input type="text" name="ID"></p>
+        <p>PASSWORD :<input type="text" name="password"></p>
+        <button type="submit" href="/home">제출</button>
+      </form>
+    </p>
+  </div>
+  <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
 </body>
 </html>

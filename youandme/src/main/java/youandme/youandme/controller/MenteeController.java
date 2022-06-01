@@ -1,34 +1,24 @@
 package youandme.youandme.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import youandme.youandme.domain.Chat;
-import youandme.youandme.domain.Mentee;
-import youandme.youandme.domain.Mentor;
-import youandme.youandme.domain.Profiles;
-import youandme.youandme.repository.ChatRepository;
-import youandme.youandme.service.ChatService;
-import youandme.youandme.service.MenteeService;
-import youandme.youandme.service.MentorService;
+import youandme.youandme.domain.*;
+import youandme.youandme.service.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.net.CookieManager;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @Controller
@@ -45,6 +35,12 @@ public class MenteeController {
         @Autowired
         private final ChatService chatService;
 
+        @Autowired
+        private final LikeService likeService;
+
+//        @Autowired
+//        private final LikeListService likeListService;
+
         private String getServerUrl(HttpServletRequest request) {
             return new StringBuffer("http://").append(request.getServerName()).append(":").append(request.getServerPort()).toString();
         }
@@ -54,7 +50,6 @@ public class MenteeController {
         public String createForm(Model model) {
             model.addAttribute("menteeForm", new MenteeForm());
             return "mentees/createMenteeForm";
-
         }
 
         @CrossOrigin(origins = "*")
@@ -120,21 +115,6 @@ public class MenteeController {
             return mobileMenteeList;
         }
 
-    //    @GetMapping(value = "/matching")
-    //    public String matching(Model model){
-    //        model.addAttribute("menteeForm", new MenteeForm());
-    //        return "matchings/createMatchingForm";
-    //    }
-    //
-    //    @PostMapping("/matching")
-    //    public String matchingList(HttpServletRequest request, @Valid MenteeForm menteeForm){
-    //        Mentor mentor = new Mentor();
-    //        System.out.println("menteeForm.getSchool() = " + menteeForm.getSchool());
-    //        System.out.println("menteeForm.getGrade() = " + menteeForm.getGrade());
-    //        System.out.println("menteeForm.getSubject() = " + menteeForm.getSubject());
-    //        return "matchings/matchingList";
-    //    }
-
         @ResponseBody
         @PostMapping("/mentees/join")
         public MobileMenteeJoinForm menteeJoin(HttpServletResponse response, @Valid MenteeJoinForm menteeJoinForm ){
@@ -160,12 +140,90 @@ public class MenteeController {
             mobileMenteeJoinForm.setProfileFilePath(mentees.get(0).getProfiles().getProfilePath()+mentees.get(0).getProfiles().getProfileName());
             mobileMenteeJoinForm.setStatus(true);
 
-            Cookie idCookie = new Cookie("mentee_id", String.valueOf(mentees.get(0).getIndex()));
-            response.addCookie(idCookie);
-            System.out.println("idCookie = " + idCookie.getValue());
             return mobileMenteeJoinForm;
 
         }
+
+        @ResponseBody
+        @PostMapping("/mentees/join/like")
+        public void Like(String mentee, String mentor){
+
+            Long mentee_id = menteeService.findID(mentee).get(0).getIndex();
+            Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
+
+            Like like = new Like();
+            like.setMentee_index(mentee_id);
+            like.setMentor_index(mentor_id);
+
+            System.out.println("like.getMentee_index() = " + like.getMentee_index());
+//            likeListService.save(likeList);
+            likeService.save(like);
+
+
+        }
+
+        @ResponseBody
+        @GetMapping("/mentees/join/like")
+        public List<MobileMentorJoinForm> likeList(String mentee){
+            Long mentee_id = menteeService.findID(mentee).get(0).getIndex();
+            List<Like> likeList = likeService.findLiked(mentee_id);
+            List<MobileMentorJoinForm> mentorList = new ArrayList<>();
+
+            for(Like like : likeList){
+                MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
+                Mentor likedMentor = mentorService.findOne(like.getMentor_index());
+                mobileMentorJoinForm.setIndex(likedMentor.getIndex());
+                mobileMentorJoinForm.setName (likedMentor.getName());
+                mobileMentorJoinForm.setSchool (likedMentor.getSchool());
+                mobileMentorJoinForm.setGrade (likedMentor.getGrade());
+                mobileMentorJoinForm.setSubject (likedMentor.getSubject());
+                mobileMentorJoinForm.setCompany (likedMentor.getCompany());
+                mobileMentorJoinForm.setProfileFilePath (likedMentor.getProfiles().getProfilePath() + likedMentor.getProfiles().getProfileName());
+                mobileMentorJoinForm.setPass (likedMentor.isPass());
+                mobileMentorJoinForm.setShortIntroduce (likedMentor.getShortIntroduce());
+                mobileMentorJoinForm.setLongIntroduce (likedMentor.getLongIntroduce());
+
+                mentorList.add(mobileMentorJoinForm);
+            }
+
+
+
+            return mentorList;
+        }
+
+        @ResponseBody
+        @PostMapping("/mentees/join/unlike")
+        public List<MobileMentorJoinForm> Unlike(String mentee, String mentor){
+
+            Long mentee_id = menteeService.findID(mentee).get(0).getIndex();
+            Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
+            List<Like> unlikeList = likeService.findUnliked(mentee_id,mentor_id);
+            for(Like unlike : unlikeList){
+                likeService.unliked(unlike);
+            }
+
+            List<Like> likeList = likeService.findLiked(mentee_id);
+            List<MobileMentorJoinForm> mentorList = new ArrayList<>();
+
+            for(Like like : likeList){
+                MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
+                Mentor likedMentor = mentorService.findOne(like.getMentor_index());
+                mobileMentorJoinForm.setIndex(likedMentor.getIndex());
+                mobileMentorJoinForm.setName (likedMentor.getName());
+                mobileMentorJoinForm.setSchool (likedMentor.getSchool());
+                mobileMentorJoinForm.setGrade (likedMentor.getGrade());
+                mobileMentorJoinForm.setSubject (likedMentor.getSubject());
+                mobileMentorJoinForm.setCompany (likedMentor.getCompany());
+                mobileMentorJoinForm.setProfileFilePath (likedMentor.getProfiles().getProfilePath() + likedMentor.getProfiles().getProfileName());
+                mobileMentorJoinForm.setPass (likedMentor.isPass());
+                mobileMentorJoinForm.setShortIntroduce (likedMentor.getShortIntroduce());
+                mobileMentorJoinForm.setLongIntroduce (likedMentor.getLongIntroduce());
+
+                mentorList.add(mobileMentorJoinForm);
+            }
+            return mentorList;
+        }
+
 
 //        @ResponseBody
 //        @PostMapping("/mentees/join/chat")
@@ -276,6 +334,8 @@ public class MenteeController {
 //        }
 
 
+
+
     @ResponseBody
     @GetMapping("/mentees/join/chat")
     public List<Chat> chat(String mentee, Model model){
@@ -292,6 +352,8 @@ public class MenteeController {
 
         List<Chat> whatISend = chatService.findSender(mentee_id);
         List<Chat> whatIReceived = chatService.findReceiver(mentee_id);
+        ArrayList allMessage = new ArrayList<>();
+
 
         System.out.println("whatISend = " + whatISend);
         for (Chat chat1 : whatISend){
@@ -313,60 +375,100 @@ public class MenteeController {
             chatting.setDate(chat2.getDate());
             chat.add(chatting);
         }
+
+        Comparator2 comp = new Comparator2();
+        Collections.sort(chat, comp);
+
+        System.out.println("chat = " + chat);
         //나중에 객체만들자
         return chat;
     }
 
-    //    @ResponseBody
-    //    @PostMapping("/like")
-    //    public
-    //    // 멘티입장에서 멘토 좌우 드래그 할때
-    //    // 멘티의 likelist에 해당 멘토의 index넘버를 넣는다.
-    //
-
-
-        @ResponseBody
-        @PostMapping("/mentees/join/logout")
-        public String logout(HttpServletResponse response){
-            Cookie cookie = new Cookie("mentee_id", null);
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-            return "home";
-        }
-
-        @ResponseBody
-        @PostMapping("/mentees/join/modify")
-        public Mentee modifyMentee(@CookieValue(name = "mentee_id", required = false) Long mentee_id, HttpServletRequest request, @Valid MenteeForm menteeForm, BindingResult result, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
-
-            Mentee oldMentee = menteeService.findOne(mentee_id);
-            Mentee newMentee = new Mentee();
-            BeanUtils.copyProperties(oldMentee,newMentee);
-            newMentee.setName(oldMentee.getName());
-            return newMentee;
-
-        }
-
-        @ResponseBody
-        @PostMapping("/mentorsMatchingList")
-        public List<MobileMentorJoinForm> mentorMatchingJoin(Model model, @Valid MatchingForm matchingForm){
-            List<Mentor> mentors = mentorService.findMatching(matchingForm.getSchool(), matchingForm.getGrade(), matchingForm.getSubject());
-
-            List<MobileMentorJoinForm> mobileMentorJoinFormsList = new ArrayList<>();
-            for(Mentor mentor : mentors){
-                if(mentor.isPass()) {
-                    MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
-                    mobileMentorJoinForm.setIndex(mentor.getIndex());
-                    mobileMentorJoinForm.setName(mentor.getName());
-                    mobileMentorJoinForm.setSchool(mentor.getSchool());
-                    mobileMentorJoinForm.setGrade(mentor.getGrade());
-                    mobileMentorJoinForm.setSubject(mentor.getSubject());
-                    mobileMentorJoinForm.setCompany(mentor.getCompany());
-                    mobileMentorJoinForm.setProfileFilePath(mentor.getProfiles().getProfilePath()+mentor.getProfiles().getProfileName());
-                    mobileMentorJoinForm.setPass(mentor.isPass());
-                    mobileMentorJoinFormsList.add(mobileMentorJoinForm);
-                }
+    class Comparator2 implements Comparator<Chat>{
+        @Override
+        public int compare(Chat o1, Chat o2) {
+            Long firstIndex = o1.getChat_num();
+            Long secondIndex = o2.getChat_num();
+            
+            if(firstIndex > secondIndex){
+                return 0;
             }
+            else{
+                return -1;
+            }
+        }
+    }
+
+
+    @ResponseBody
+    @PostMapping("/mentees/join/logout")
+    public String logout(HttpServletResponse response){
+        Cookie cookie = new Cookie("mentee_id", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return "home";
+    }
+
+    @ResponseBody
+    @PostMapping("/mentees/join/modify")
+    public Mentee modifyMentee(String mentee, HttpServletRequest request, @Valid MenteeForm menteeForm, BindingResult result, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
+        System.out.println("mentee = " + mentee);
+
+        Long mentee_id = menteeService.findID(mentee).get(0).getIndex();
+        Mentee newMentee = new Mentee();
+
+        if(profile != null){
+
+            newMentee.setPassword(menteeForm.getPassword());
+            newMentee.setName(menteeForm.getName());
+            newMentee.setSchool(menteeForm.getSchool());
+            newMentee.setGrade(menteeForm.getGrade());
+            newMentee.setSubject(menteeForm.getSubject());
+
+            String serverUrl = getServerUrl(request);
+            String profilePath =  serverUrl + "/images/";
+            String profileName =  UUID.randomUUID().toString()+"_"+profile.getOriginalFilename();
+            Profiles profiles = new Profiles(profile.getOriginalFilename(), profileName, profilePath);
+            Path saveProfilePath = Paths.get("./images/" + profileName);
+            profile.transferTo(saveProfilePath);
+
+            newMentee.setProfiles(profiles);
+            menteeService.update(mentee_id, newMentee);
+        }
+
+        System.out.println("newMentee.getIndex() = " + newMentee.getName());
+
+        return newMentee;
+
+    }
+
+    @ResponseBody
+    @GetMapping("/mentorsMatchingList")
+    public List<MobileMentorJoinForm> mentorMatchingJoin(Model model, @Valid MatchingForm matchingForm){
+        List<Mentor> mentors = mentorService.findMatching(matchingForm.getSchool(), matchingForm.getGrade(), matchingForm.getSubject());
+
+
+        List<MobileMentorJoinForm> mobileMentorJoinFormsList = new ArrayList<>();
+        if(mentors.isEmpty()){
             return mobileMentorJoinFormsList;
         }
+
+        for(Mentor mentor : mentors){
+            if(mentor.isPass()) {
+                MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
+                mobileMentorJoinForm.setIndex(mentor.getIndex());
+                mobileMentorJoinForm.setName(mentor.getName());
+                mobileMentorJoinForm.setSchool(mentor.getSchool());
+                mobileMentorJoinForm.setGrade(mentor.getGrade());
+                mobileMentorJoinForm.setSubject(mentor.getSubject());
+                mobileMentorJoinForm.setCompany(mentor.getCompany());
+                mobileMentorJoinForm.setProfileFilePath(mentor.getProfiles().getProfilePath()+mentor.getProfiles().getProfileName());
+                mobileMentorJoinForm.setPass(mentor.isPass());
+                mobileMentorJoinFormsList.add(mobileMentorJoinForm);
+            }
+        }
+        return mobileMentorJoinFormsList;
+    }
+
 }
 

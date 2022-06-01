@@ -25,6 +25,21 @@ public class MentorService {
         return mentor.getIndex();
     }
 
+    @Transactional
+    public Mentor update(Long mentee_id, Mentor newMentor){
+        Mentor findResult = mentorRepository.findOne(mentee_id);
+        findResult.setPassword(newMentor.getPassword());
+        findResult.setName(newMentor.getName());
+        findResult.setSchool(newMentor.getSchool());
+        findResult.setGrade(newMentor.getGrade());
+        findResult.setSubject(newMentor.getSubject());
+        findResult.setCompany(newMentor.getCompany());
+        findResult.setProfiles(newMentor.getProfiles());
+        findResult.setShortIntroduce(newMentor.getShortIntroduce());
+        findResult.setLongIntroduce(newMentor.getLongIntroduce());
+        return findResult;
+    }
+
     @Modifying
     @Transactional
     public void resave(Mentor mentor){

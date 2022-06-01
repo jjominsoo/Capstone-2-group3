@@ -24,6 +24,19 @@ public class MenteeService {
         return mentee.getIndex();
     }
 
+    @Transactional
+    public Mentee update(Long mentee_id, Mentee newMentee){
+        Mentee findResult = menteeRepository.findOne(mentee_id);
+        findResult.setPassword(newMentee.getPassword());
+        findResult.setName(newMentee.getName());
+        findResult.setSchool(newMentee.getSchool());
+        findResult.setGrade(newMentee.getGrade());
+        findResult.setSubject(newMentee.getSubject());
+        findResult.setProfiles(newMentee.getProfiles());
+
+        return findResult;
+    }
+
     private void validateDuplicateMentee(Mentee mentee) {
         List<Mentee> findMentees = menteeRepository.findID(mentee.getID());
         if(!findMentees.isEmpty()){
@@ -35,8 +48,8 @@ public class MenteeService {
         return menteeRepository.findAll();
     }
 
-    public Mentee findOne(Long menteeIndex){
-        return menteeRepository.findOne(menteeIndex);
+    public Mentee findOne(Long mentee_index){
+        return menteeRepository.findOne(mentee_index);
     }
 
     public List<Mentee> findID(String menteeID){

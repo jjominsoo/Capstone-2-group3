@@ -29,7 +29,6 @@
             <thead>
             <tr>
                 <th>아이디</th>
-                <th>비밀번호</th>
                 <th>이름</th>
                 <th>학교</th>
                 <th>성적</th>
@@ -45,7 +44,6 @@
             <tr th:each="mentor : ${mentors}">
 
                 <td th:text="${mentor.ID}"></td>
-                <td th:text="${mentor.password}"></td>
                 <td th:text="${mentor.Name}"></td>
                 <td th:text="${mentor.school}"></td>
                 <td th:text="${mentor.grade}"></td>

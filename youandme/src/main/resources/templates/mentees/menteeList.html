@@ -9,7 +9,6 @@
             <thead>
             <tr>
                 <th>아이디</th>
-                <th>비밀번호</th>
                 <th>이름</th>
                 <th>학교</th>
                 <th>성적</th>
@@ -21,7 +20,6 @@
 
             <tr th:each="mentee : ${mentees}">
                 <td th:text="${mentee.ID}"></td>
-                <td th:text="${mentee.password}"></td>
                 <td th:text="${mentee.Name}"></td>
                 <td th:text="${mentee.school}"></td>
                 <td th:text="${mentee.grade}"></td>

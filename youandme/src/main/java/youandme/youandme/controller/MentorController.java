@@ -361,6 +361,39 @@ public class MentorController {
         return chat;
     }
 
+    @ResponseBody
+    @PostMapping("/mentors/join/modify")
+    public Mentor modifyMentor(String mentor , HttpServletRequest request, @Valid MentorForm mentorForm, BindingResult result, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
+        System.out.println("mentor = " + mentor);
+        Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
+        Mentor newMentor = new Mentor();
+
+        if(profile != null){
+
+            newMentor.setPassword(mentorForm.getPassword());
+            newMentor.setName(mentorForm.getName());
+            newMentor.setSchool(mentorForm.getSchool());
+            newMentor.setGrade(mentorForm.getGrade());
+            newMentor.setSubject(mentorForm.getSubject());
+            newMentor.setCompany(mentorForm.getCompany());
+            newMentor.setShortIntroduce(mentorForm.getShortIntroduce());
+            newMentor.setLongIntroduce(mentorForm.getLongIntroduce());
+            String serverUrl = getServerUrl(request);
+            String profilePath =  serverUrl + "/images/";
+            String profileName =  UUID.randomUUID().toString()+"_"+profile.getOriginalFilename();
+            Profiles profiles = new Profiles(profile.getOriginalFilename(), profileName, profilePath);
+            Path saveProfilePath = Paths.get("./images/" + profileName);
+            profile.transferTo(saveProfilePath);
+
+            newMentor.setProfiles(profiles);
+            mentorService.update(mentor_id, newMentor);
+        }
+
+        System.out.println("newMentor.getIndex() = " + newMentor.getName());
+
+        return newMentor;
+
+    }
 
 
 
