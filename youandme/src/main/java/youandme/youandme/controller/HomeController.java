@@ -30,7 +30,7 @@ public class HomeController {
             adminService.join(administrator);
         }
         model.addAttribute("admin", new Administrator());
-        return "/login";
+        return "login";
     }
 
     @PostMapping("/login")
@@ -46,7 +46,7 @@ public class HomeController {
         }
         log.info("login controller");
 
-        return "/home";
+        return "home";
     }
 
 //    @RequestMapping("/")
