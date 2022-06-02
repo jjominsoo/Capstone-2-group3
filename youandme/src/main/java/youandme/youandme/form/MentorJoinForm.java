@@ -1,4 +1,4 @@
-package youandme.youandme.controller;
+package youandme.youandme.form;
 
 
 import lombok.Getter;

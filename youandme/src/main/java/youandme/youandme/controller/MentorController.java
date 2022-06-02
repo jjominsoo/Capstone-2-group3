@@ -1,6 +1,5 @@
 package youandme.youandme.controller;
 
-import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,12 +8,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import youandme.youandme.domain.*;
+import youandme.youandme.form.*;
 import youandme.youandme.service.ChatService;
 import youandme.youandme.service.LikeService;
 import youandme.youandme.service.MenteeService;
 import youandme.youandme.service.MentorService;
 
-import javax.persistence.EntityManager;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,7 +44,7 @@ public class MentorController {
     private String getServerUrl(HttpServletRequest request) {
         return new StringBuffer("http://").append(request.getServerName()).append(":").append(request.getServerPort()).toString();
     }
-
+    //========================================회원가입 (관리자페이지)=============================================
     @GetMapping(value = "/mentors/new")
     public String createForm(Model model) {
         model.addAttribute("mentorForm", new MentorForm());
@@ -112,9 +111,12 @@ public class MentorController {
 
         mentorService.join(mentor);
 
-        return "redirect:/";
+        return "home";
 
     }
+    //=====================================================================================
+
+    ////====================================멘토들 리스트 (관리자페이지) =================================================
 
     @GetMapping(value = "/mentors")
     public String list(Model model){
@@ -135,7 +137,6 @@ public class MentorController {
 
                 mobileMentor.setIndex(mentor.getIndex());
                 mobileMentor.setID(mentor.getID());
-                mobileMentor.setPassword(mentor.getPassword());
                 mobileMentor.setName(mentor.getName());
                 mobileMentor.setSchool(mentor.getSchool());
                 mobileMentor.setGrade(mentor.getGrade());
@@ -152,7 +153,9 @@ public class MentorController {
         return mobileMemberList;
     }
 
+    //=====================================================================================
 
+    //========================================멘토 승인 (관리자페이지)=============================================
 
     @GetMapping(value = "mentors/{mentor_id}/edit")
     public String pass(@PathVariable("mentor_id") Long mentorId){
@@ -166,6 +169,9 @@ public class MentorController {
         mentorService.resave(mentor);
         return "redirect:/mentors";
     }
+    //=====================================================================================
+
+    //======================================멘토 로그인 (앱)===============================================
 
     @ResponseBody
     @PostMapping("/mentors/join")
@@ -194,53 +200,19 @@ public class MentorController {
         mobileMentorJoinForm.setProfileFilePath(mentors.get(0).getProfiles().getProfilePath() + mentors.get(0).getProfiles().getProfileName());
         mobileMentorJoinForm.setStatus(true);
         mobileMentorJoinForm.setPass(mentors.get(0).isPass());
+        //!!! status, pass 다 필요없지 않느냐
         mobileMentorJoinForm.setShortIntroduce(mentors.get(0).getShortIntroduce());
         mobileMentorJoinForm.setLongIntroduce(mentors.get(0).getLongIntroduce());
 
-//        Cookie idCookie = new Cookie("mentor_id", String.valueOf(mentors.get(0).getIndex()));
-//        response.addCookie(idCookie);
         return mobileMentorJoinForm;
     }
 
-//    @ResponseBody
-//    @PostMapping("/mentors/join/chat")
-//    public Chat list2(@CookieValue(name = "mentor_id", required = false) Cookie cookie, Long mentee_id, Model model, String text){
-//
-//        //왜 갑자기 쿠키를 못받지?
-//        Chat chat = new Chat();
-//        Long mentor_id = Long.valueOf(cookie.getValue());
-//        System.out.println("mentor_id = " + mentor_id);
-//        if(mentor_id == null){
-//            System.out.println("mentor id is null");
-//            return chat;
-//        }
-//
-//        Mentor Sender = mentorService.findOne(mentor_id);
-//        Mentee Receiver = menteeService.findOne(mentee_id);
-//
-//        if(Sender == null || Receiver == null){
-//            System.out.println("no user");
-//            return chat;
-//        }
-//
-//
-//        chat.setSender_index(Sender.getIndex());
-//        chat.setReceiver_index(Receiver.getIndex());
-//        chat.setText(text);
-//        chat.setDate(LocalDateTime.now());
-//        model.addAttribute("mentor",Sender);
-//        model.addAttribute("mentee",Receiver);
-//        System.out.println("mentor_id = " + mentor_id);
-//        chatService.save(chat);
-//
-//        return chat;
-//    }
+    //=====================================================================================
 
     @ResponseBody
     @PostMapping("/mentors/join/chat")
-    public Chat list2(String mentor , String mentee, Model model, String text){
+    public Chat sendtoMentee(String mentor , String mentee, Model model, String text){
 
-        //왜 갑자기 쿠키를 못받지?
         Chat chat = new Chat();
 
         if(mentor == null){
@@ -254,11 +226,10 @@ public class MentorController {
         Mentor Sender = mentorService.findOne(mentor_id);
         Mentee Receiver = menteeService.findOne(mentee_id);
 
-        if(Sender == null || Receiver == null){
-            System.out.println("no user");
+        if(Receiver == null){
+            System.out.println("no mentee to take message");
             return chat;
         }
-
 
         chat.setSender_index(Sender.getIndex());
         chat.setReceiver_index(Receiver.getIndex());
@@ -266,62 +237,11 @@ public class MentorController {
         chat.setDate(LocalDateTime.now());
         model.addAttribute("mentor",Sender);
         model.addAttribute("mentee",Receiver);
-        System.out.println("mentor_id = " + mentor_id);
+        //!!!모델 필요성?
         chatService.save(chat);
 
         return chat;
     }
-
-    @ResponseBody
-    @PostMapping("/mentors/join/logout")
-    public String logout(HttpServletResponse response){
-        Cookie cookie = new Cookie("mentor_id", null);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
-        return "home";
-    }
-
-
-    //위에선 모든 멘토들 리스트 보낸거고 이제는 조건에 맞는 멘토들 받자.
-
-    //비록 기능자체는 mentee를 사용하지만 mentor에 관한 내용이므로 여기다 놨다.
-//    @ResponseBody
-//    @GetMapping("/mentors/join/chat")
-//    public List<Chat> chat(@CookieValue(name = "mentor_id", required = false) Long mentor_id, Model model){
-//
-//        List<Chat> chat = new ArrayList<>();
-//
-//
-//        if(mentor_id == null){
-//            System.out.println("mentor id is null");
-//            return chat;
-//        }
-//
-//        List<Chat> whatISend = chatService.findSender(mentor_id);
-//        List<Chat> whatIReceived = chatService.findReceiver(mentor_id);
-//
-//        for (Chat chat1 : whatISend){
-//            Chat chatting = new Chat();
-//            chatting.setChat_num(chat1.getChat_num());
-//            chatting.setSender_index(chat1.getSender_index());
-//            chatting.setReceiver_index(chat1.getReceiver_index());
-//            chatting.setText(chat1.getText());
-//            chatting.setDate(chat1.getDate());
-//            chat.add(chatting);
-//        }
-//
-//        for (Chat chat2 : whatIReceived){
-//            Chat chatting = new Chat();
-//            chatting.setChat_num(chat2.getChat_num());
-//            chatting.setSender_index(chat2.getSender_index());
-//            chatting.setReceiver_index(chat2.getReceiver_index());
-//            chatting.setText(chat2.getText());
-//            chatting.setDate(chat2.getDate());
-//            chat.add(chatting);
-//        }
-//        //나중에 객체만들자
-//        return chat;
-//    }
 
     @ResponseBody
     @GetMapping("/mentors/join/chat")
@@ -329,11 +249,10 @@ public class MentorController {
 
         List<Chat> chat = new ArrayList<>();
 
-
         if(mentor == null){
             System.out.println("mentor id is null");
             return chat;
-        }
+        }//어차피 로그인된 사람의 아이디 받는거라 null값이 안나올텐데?
 
         Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
 
@@ -362,7 +281,7 @@ public class MentorController {
 
         Comparator2 comp = new Comparator2();
         Collections.sort(chat,comp);
-        //나중에 객체만들자
+        //date를 간단한걸로
         return chat;
     }
     class Comparator2 implements Comparator<Chat> {
@@ -379,11 +298,12 @@ public class MentorController {
             }
         }
     }
+    //=====================================================================================
 
+    //======================================정보수정 (앱)===============================================
     @ResponseBody
     @PostMapping("/mentors/join/modify")
     public Mentor modifyMentor(String mentor , HttpServletRequest request, @Valid MentorForm mentorForm, BindingResult result, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
-        System.out.println("mentor = " + mentor);
         Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
         Mentor newMentor = new Mentor();
 
@@ -418,13 +338,14 @@ public class MentorController {
             newMentor.setProfiles(profiles);
             mentorService.update(mentor_id, newMentor);
         }
-
-        System.out.println("newMentor.getIndex() = " + newMentor.getName());
+        // 증명서도 다시 받을 수 있게 할까??
 
         return newMentor;
 
     }
+    //=====================================================================================
 
+    //=======================================자신을 좋아요 누른 멘티들 리스트 (앱)==============================================
     @ResponseBody
     @GetMapping("/mentors/likedList")
     public List<MobileMenteeJoinForm> mentorLikedList(String mentor){
@@ -446,5 +367,5 @@ public class MentorController {
         return menteeLikeList;
     }
 
-
+    //=====================================================================================
 }

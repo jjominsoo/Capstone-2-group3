@@ -1,14 +1,13 @@
-package youandme.youandme.controller;
+package youandme.youandme.form;
 
 
 import lombok.Getter;
 import lombok.Setter;
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
 
 
 @Getter @Setter
-public class MentorForm {
+public class MenteeForm {
 
     @NotEmpty(message = "회원 아이디는 필수입니다")
     private String ID;
@@ -18,21 +17,10 @@ public class MentorForm {
     private String school;
     private Float grade;
     private String subject;
-    private String company;
 
     private String profileName;
     private String profilePath;
 
-    private String graduationFileName;
-    private String graduationFilePath;
-
-    private String companyFileName;
-    private String companyFilePath;
-
     private boolean status;
-    private boolean pass;
-
-    private String shortIntroduce;
-    private String longIntroduce;
 
 }

@@ -1,4 +1,4 @@
-package youandme.youandme.controller;
+package youandme.youandme.form;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +8,6 @@ public class MobileMentee {
 
     private Long index;
     private String ID;
-    private String password;
     private String name;
     private String school;
     private Float grade;
