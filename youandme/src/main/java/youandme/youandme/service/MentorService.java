@@ -35,6 +35,8 @@ public class MentorService {
         findResult.setSubject(newMentor.getSubject());
         findResult.setCompany(newMentor.getCompany());
         findResult.setProfiles(newMentor.getProfiles());
+        findResult.setGraduationFiles(newMentor.getGraduationFiles());
+        findResult.setCompanyFiles(newMentor.getCompanyFiles());
         findResult.setShortIntroduce(newMentor.getShortIntroduce());
         findResult.setLongIntroduce(newMentor.getLongIntroduce());
         return findResult;

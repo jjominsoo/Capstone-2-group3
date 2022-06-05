@@ -338,7 +338,14 @@ public class MenteeController {
         if(!profile.isEmpty()){
             System.out.println("There is new Profile!");
             newMentee.setID(mentee);
-            newMentee.setPassword(menteeModifyForm.getPassword());
+            if(menteeModifyForm.getPassword().isEmpty()){
+                String newPassword = menteeService.findID(mentee).get(0).getPassword();
+                newMentee.setPassword(newPassword);
+            }
+            else{
+                newMentee.setPassword(menteeModifyForm.getPassword());
+            }
+
             newMentee.setName(menteeModifyForm.getName());
             newMentee.setSchool(menteeModifyForm.getSchool());
             newMentee.setGrade(menteeModifyForm.getGrade());
