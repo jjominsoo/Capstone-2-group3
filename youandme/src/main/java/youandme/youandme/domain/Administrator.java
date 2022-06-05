@@ -19,5 +19,6 @@ public class Administrator {
 
     private String ID;
     private String password;
+    private boolean ImAdmin;
     //멘토 로그인
 }

@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import youandme.youandme.domain.*;
 import youandme.youandme.form.*;
-import youandme.youandme.service.ChatService;
-import youandme.youandme.service.LikeService;
-import youandme.youandme.service.MenteeService;
-import youandme.youandme.service.MentorService;
+import youandme.youandme.service.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +37,9 @@ public class MentorController {
 
     @Autowired
     private final LikeService likeService;
+
+    @Autowired
+    private final AdminService adminService;
 
     private String getServerUrl(HttpServletRequest request) {
         return new StringBuffer("http://").append(request.getServerName()).append(":").append(request.getServerPort()).toString();
@@ -157,7 +157,7 @@ public class MentorController {
 
     //========================================멘토 승인 (관리자페이지)=============================================
 
-    @GetMapping(value = "mentors/{mentor_id}/edit")
+    @GetMapping(value = "mentors/{mentor_id}/pass")
     public String pass(@PathVariable("mentor_id") Long mentorId){
         Mentor mentor = mentorService.findOne(mentorId);
         if(!mentor.isPass()){
@@ -168,6 +168,30 @@ public class MentorController {
         }
         mentorService.resave(mentor);
         return "redirect:/mentors";
+    }
+
+    @ResponseBody
+    @PostMapping("/mentors/join/adminChat")
+    public Chat adminChat(String mentor,String text){
+
+        Chat chat = new Chat();
+
+        Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
+
+        Mentor Receiver = mentorService.findOne(mentor_id);
+
+        if(Receiver == null){
+            System.out.println("no mentor to take message");
+            return chat;
+        }
+
+        chat.setSender_index(1L);
+        chat.setReceiver_index(Receiver.getIndex());
+        chat.setText(text);
+        chat.setDate(LocalDateTime.now());
+        chatService.save(chat);
+
+        return chat;
     }
     //=====================================================================================
 
@@ -208,6 +232,8 @@ public class MentorController {
     }
 
     //=====================================================================================
+    //=======================================채팅 (앱)==============================================
+
 
     @ResponseBody
     @PostMapping("/mentors/join/chat")
@@ -303,12 +329,12 @@ public class MentorController {
     //======================================정보수정 (앱)===============================================
     @ResponseBody
     @PostMapping("/mentors/join/modify")
-    public Mentor modifyMentor(String mentor , HttpServletRequest request, @Valid MentorForm mentorForm, BindingResult result, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
+    public Mentor modifyMentor(String mentor , HttpServletRequest request, @Valid MentorForm mentorForm, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
         Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
         Mentor newMentor = new Mentor();
 
-        if(profile != null){
-
+        if(!profile.isEmpty()){
+            System.out.println("There is new Profile!");
             newMentor.setPassword(mentorForm.getPassword());
             newMentor.setName(mentorForm.getName());
             newMentor.setSchool(mentorForm.getSchool());
@@ -328,6 +354,7 @@ public class MentorController {
             else {
                 newMentor.setLongIntroduce("안녕하세요 "+mentorForm.getName() +"입니다");
             }
+
             String serverUrl = getServerUrl(request);
             String profilePath =  serverUrl + "/images/";
             String profileName =  UUID.randomUUID().toString()+"_"+profile.getOriginalFilename();

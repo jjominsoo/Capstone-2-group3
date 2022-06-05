@@ -244,6 +244,8 @@ public class MenteeController {
     //=====================================================================================
 
     //=====================================채팅기능 (앱)================================================
+
+
     @ResponseBody
     @PostMapping("/mentees/join/chat")
     public Chat sendToMentor( String mentee, String mentor, String text){
@@ -327,39 +329,57 @@ public class MenteeController {
     //=======================================정보수정 (앱)==============================================
     @ResponseBody
     @PostMapping("/mentees/join/modify")
-    public Mentee modifyMentee(String mentee, HttpServletRequest request, @Valid MenteeForm menteeForm, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
+    public Mentee modifyMentee(String mentee, HttpServletRequest request, @Valid MenteeModifyForm menteeModifyForm, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
         System.out.println("mentee = " + mentee);
 
         Long mentee_id = menteeService.findID(mentee).get(0).getIndex();
         Mentee newMentee = new Mentee();
+        System.out.println("profile.getOriginalFilename() = " + profile.getOriginalFilename());
+        if(!profile.isEmpty()){
+            System.out.println("There is new Profile!");
+            newMentee.setID(mentee);
+            newMentee.setPassword(menteeModifyForm.getPassword());
+            newMentee.setName(menteeModifyForm.getName());
+            newMentee.setSchool(menteeModifyForm.getSchool());
+            newMentee.setGrade(menteeModifyForm.getGrade());
+            newMentee.setSubject(menteeModifyForm.getSubject());
 
-        if(profile != null){
-            newMentee.setPassword(menteeForm.getPassword());
-            newMentee.setName(menteeForm.getName());
-            newMentee.setSchool(menteeForm.getSchool());
-            newMentee.setGrade(menteeForm.getGrade());
-            newMentee.setSubject(menteeForm.getSubject());
 
             String serverUrl = getServerUrl(request);
             String profilePath =  serverUrl + "/images/";
             System.out.println("profile.toString() = " + profile.toString());
             String profileName =  UUID.randomUUID().toString()+"_"+profile.getOriginalFilename();
-            Profiles profiles = new Profiles(profile.getOriginalFilename(), profileName, profilePath);
+            Profiles newProfiles = new Profiles(profile.getOriginalFilename(), profileName, profilePath);
             Path saveProfilePath = Paths.get("./images/" + profileName);
             profile.transferTo(saveProfilePath);
 
-            newMentee.setProfiles(profiles);
+            newMentee.setProfiles(newProfiles);
             menteeService.update(mentee_id, newMentee);
+        }
+        else{
+            System.out.println("There is no Profile!");
+            String oldProfileName = menteeService.findID(mentee).get(0).getProfiles().getProfileName();
+            String oldProfilePath = menteeService.findID(mentee).get(0).getProfiles().getProfilePath();
+            String oldProfileOriName = menteeService.findID(mentee).get(0).getProfiles().getProfileOriName();
+
+
+            newMentee.setPassword(menteeModifyForm.getPassword());
+            newMentee.setName(menteeModifyForm.getName());
+            newMentee.setSchool(menteeModifyForm.getSchool());
+            newMentee.setGrade(menteeModifyForm.getGrade());
+            newMentee.setSubject(menteeModifyForm.getSubject());
+            Profiles oldProfiles = new Profiles(oldProfileOriName,oldProfileName, oldProfilePath);
+            newMentee.setProfiles(oldProfiles);
         }
 
         return newMentee;
 
     }
     //=====================================================================================
-    //=====================================추천멘토 리스트 (앱)================================================
+    //=====================================추천 멘토 리스트 (앱)================================================
     @ResponseBody
     @GetMapping("/mentorsMatchingList")
-    public List<MobileMentorJoinForm> mentorMatchingList(Model model, @Valid MatchingForm matchingForm){
+    public List<MobileMentorJoinForm> mentorMatchingList(@Valid MatchingForm matchingForm){
         List<Mentor> mentors = mentorService.findMatching(matchingForm.getSchool(), matchingForm.getGrade(), matchingForm.getSubject());
 
         List<MobileMentorJoinForm> mobileMentorJoinFormsList = new ArrayList<>();

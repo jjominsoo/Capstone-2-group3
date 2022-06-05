@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import youandme.youandme.domain.Administrator;
 import youandme.youandme.service.AdminService;
 
+import javax.persistence.Entity;
 import javax.validation.Valid;
 
 

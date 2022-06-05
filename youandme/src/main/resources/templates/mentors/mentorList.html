@@ -56,10 +56,10 @@
 
                 <td>
                     <th:block th:if="${!mentor.isPass()}">
-                    <a href="#" th:onclick="aaa()" th:href="@{/mentors/{index}/edit (index=${mentor.index})}" class="btn btn-primary" role="button">승인</a>
+                    <a href="#" th:onclick="aaa()" th:href="@{/mentors/{index}/pass (index=${mentor.index})}" class="btn btn-primary" role="button">승인</a>
                     </th:block>
                     <th:block th:if="${mentor.isPass()}">
-                    <a href="#" th:onclick="bbb()" th:href="@{/mentors/{index}/edit (index=${mentor.index})}" class="btn btn-primary" role="button">승인취소</a>
+                    <a href="#" th:onclick="bbb()" th:href="@{/mentors/{index}/pass (index=${mentor.index})}" class="btn btn-primary" role="button">승인취소</a>
                     </th:block>
                 </td>
                 <script>
