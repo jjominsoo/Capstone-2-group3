@@ -470,6 +470,7 @@ public class MentorController {
                 CompanyFiles oldCompanyFile = new CompanyFiles(oldCompanyOriName,oldCompanyName,oldCompanyPath);
                 newMentor.setCompanyFiles(oldCompanyFile);
             }
+            mentorService.update(mentor_id, newMentor);
         }
         // 증명서도 다시 받을 수 있게 할까??
 
