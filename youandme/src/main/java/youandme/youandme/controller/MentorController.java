@@ -481,9 +481,114 @@ public class MentorController {
 //        return newMentor;
 //
 //    }
+
+//    @ResponseBody
+//    @PostMapping("/mentors/join/modifyFile")
+//    public Mentor modifyMentorFile(String mentor , HttpServletRequest request, @Valid MentorModifyForm mentorModifyForm, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile, @RequestParam("uploadGraduationFile") MultipartFile graduation,  @RequestParam("uploadCompanyFile") MultipartFile company) throws IOException, NullPointerException{
+//        Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
+//        Mentor oldMentor = mentorService.findID(mentor).get(0);
+//        Mentor newMentor = new Mentor();
+//        String serverUrl = getServerUrl(request);
+//
+//        newMentor.setIndex(mentor_id);
+//        newMentor.setID(mentor);
+//        newMentor.setPassword(oldMentor.getPassword());
+//        newMentor.setName(oldMentor.getName());
+//        newMentor.setSchool(oldMentor.getSchool());
+//        newMentor.setGrade(oldMentor.getGrade());
+//        newMentor.setSubject(oldMentor.getSubject());
+//        newMentor.setCompany(oldMentor.getCompany());
+//        newMentor.setShortIntroduce(oldMentor.getShortIntroduce());
+//        newMentor.setLongIntroduce(oldMentor.getLongIntroduce());
+//
+//        String oldProfileName = mentorService.findID(mentor).get(0).getProfiles().getProfileName();
+//        String oldProfilePath = mentorService.findID(mentor).get(0).getProfiles().getProfilePath();
+//        String oldProfileOriName = mentorService.findID(mentor).get(0).getProfiles().getProfileOriName();se
+//
+//        String oldGraduationName = mentorService.findID(mentor).get(0).getGraduationFiles().getGraduationFileName();
+//        String oldGraduationPath = mentorService.findID(mentor).get(0).getGraduationFiles().getGraduationFilePath();
+//        String oldGraduationOriName = mentorService.findID(mentor).get(0).getGraduationFiles().getGraduationFileOriName();
+//
+//        String oldCompanyName = mentorService.findID(mentor).get(0).getCompanyFiles().getCompanyFileName();
+//        String oldCompanyPath = mentorService.findID(mentor).get(0).getCompanyFiles().getCompanyFilePath();
+//        String oldCompanyOriName = mentorService.findID(mentor).get(0).getCompanyFiles().getCompanyFileOriName();
+//
+//        if(!profile.isEmpty()){
+//            System.out.println("There is new Profile!");
+//
+//            Path filePath = Paths.get("./images/" + oldProfileName);
+//            System.out.println("filePath = " + filePath);
+//            Files.delete(filePath);
+//
+//            String profilePath =  serverUrl + "/images/";
+//            String profileName =  UUID.randomUUID().toString()+"_"+profile.getOriginalFilename();
+//            Profiles profiles = new Profiles(profile.getOriginalFilename(), profileName, profilePath);
+//            Path saveProfilePath = Paths.get("./images/" + profileName);
+//            profile.transferTo(saveProfilePath);
+//            newMentor.setProfiles(profiles);
+//
+//        }
+//        else{
+//            System.out.println("There is no Profile!");
+//
+//            Profiles oldProfiles = new Profiles(oldProfileOriName, oldProfileName, oldProfilePath);
+//            newMentor.setProfiles(oldProfiles);
+//
+//        }
+//
+//        if(!graduation.isEmpty()){
+//            System.out.println("There is new Graduation file!");
+//
+//            Path filePath = Paths.get("./graduation_certification/" + oldGraduationName);
+//            System.out.println("filePath = " + filePath);
+//            Files.delete(filePath);
+//
+//            String GraduationPath =  serverUrl + "/graduation_certification/";
+//            String GraduationName =  UUID.randomUUID().toString()+"_"+graduation.getOriginalFilename();
+//            GraduationFiles graduationFiles  = new GraduationFiles(graduation.getOriginalFilename(), GraduationName, GraduationPath);
+//            Path saveGraduationPath = Paths.get("./graduation_certification/" + GraduationName);
+//            graduation.transferTo(saveGraduationPath);
+//            newMentor.setGraduationFiles(graduationFiles);
+//        }
+//        else{
+//            System.out.println("There is no Graduation file!");
+//
+//
+//            GraduationFiles oldGraduationFile = new GraduationFiles(oldGraduationOriName,oldGraduationName,oldGraduationPath);
+//            newMentor.setGraduationFiles(oldGraduationFile);
+//        }
+//
+//        if(!company.isEmpty()){
+//            System.out.println("There is new Company file!");
+//
+//            Path filePath = Paths.get("./company_certification/" + oldCompanyName);
+//            System.out.println("filePath = " + filePath);
+//            Files.delete(filePath);
+//
+//            String CompanyPath =  serverUrl + "/company_certification/";
+//            String CompanyName =  UUID.randomUUID().toString()+"_"+company.getOriginalFilename();
+//            CompanyFiles companyFiles = new CompanyFiles(company.getOriginalFilename(), CompanyName, CompanyPath);
+//            Path saveCompanyPath = Paths.get("./company_certification/" + CompanyName);
+//            company.transferTo(saveCompanyPath);
+//            newMentor.setCompanyFiles(companyFiles);
+//        }
+//        else{
+//            System.out.println("There is no Company file!");
+//
+//
+//            CompanyFiles oldCompanyFile = new CompanyFiles(oldCompanyOriName,oldCompanyName,oldCompanyPath);
+//            newMentor.setCompanyFiles(oldCompanyFile);
+//        }
+//
+//        mentorService.update(mentor_id, newMentor);
+//
+//        return newMentor;
+//
+//    }
+
     @ResponseBody
-    @PostMapping("/mentors/join/modifyFile")
-    public Mentor modifyMentorFile(String mentor , HttpServletRequest request, @Valid MentorModifyForm mentorModifyForm, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile, @RequestParam("uploadGraduationFile") MultipartFile graduation,  @RequestParam("uploadCompanyFile") MultipartFile company) throws IOException, NullPointerException{
+    @PostMapping("/mentors/join/modifyProfile")
+    public Mentor modifyMentorProfile(String mentor , HttpServletRequest request, @Valid MentorModifyForm mentorModifyForm, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile, @RequestParam("uploadGraduationFile") MultipartFile graduation,  @RequestParam("uploadCompanyFile") MultipartFile company) throws IOException, NullPointerException{
         Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
         Mentor oldMentor = mentorService.findID(mentor).get(0);
         Mentor newMentor = new Mentor();
@@ -504,13 +609,9 @@ public class MentorController {
         String oldProfilePath = mentorService.findID(mentor).get(0).getProfiles().getProfilePath();
         String oldProfileOriName = mentorService.findID(mentor).get(0).getProfiles().getProfileOriName();
 
-        String oldGraduationName = mentorService.findID(mentor).get(0).getGraduationFiles().getGraduationFileName();
-        String oldGraduationPath = mentorService.findID(mentor).get(0).getGraduationFiles().getGraduationFilePath();
-        String oldGraduationOriName = mentorService.findID(mentor).get(0).getGraduationFiles().getGraduationFileOriName();
+        newMentor.setGraduationFiles(oldMentor.getGraduationFiles());
+        newMentor.setCompanyFiles(oldMentor.getCompanyFiles());
 
-        String oldCompanyName = mentorService.findID(mentor).get(0).getCompanyFiles().getCompanyFileName();
-        String oldCompanyPath = mentorService.findID(mentor).get(0).getCompanyFiles().getCompanyFilePath();
-        String oldCompanyOriName = mentorService.findID(mentor).get(0).getCompanyFiles().getCompanyFileOriName();
 
         if(!profile.isEmpty()){
             System.out.println("There is new Profile!");
@@ -535,6 +636,38 @@ public class MentorController {
 
         }
 
+        mentorService.update(mentor_id, newMentor);
+
+        return newMentor;
+
+    }
+
+    @ResponseBody
+    @PostMapping("/mentors/join/modifyGraduationFile")
+    public Mentor modifyMentorGraduationFile(String mentor , HttpServletRequest request, @Valid MentorModifyForm mentorModifyForm, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile, @RequestParam("uploadGraduationFile") MultipartFile graduation,  @RequestParam("uploadCompanyFile") MultipartFile company) throws IOException, NullPointerException{
+        Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
+        Mentor oldMentor = mentorService.findID(mentor).get(0);
+        Mentor newMentor = new Mentor();
+        String serverUrl = getServerUrl(request);
+
+        newMentor.setIndex(mentor_id);
+        newMentor.setID(mentor);
+        newMentor.setPassword(oldMentor.getPassword());
+        newMentor.setName(oldMentor.getName());
+        newMentor.setSchool(oldMentor.getSchool());
+        newMentor.setGrade(oldMentor.getGrade());
+        newMentor.setSubject(oldMentor.getSubject());
+        newMentor.setCompany(oldMentor.getCompany());
+        newMentor.setShortIntroduce(oldMentor.getShortIntroduce());
+        newMentor.setLongIntroduce(oldMentor.getLongIntroduce());
+
+        String oldGraduationName = mentorService.findID(mentor).get(0).getGraduationFiles().getGraduationFileName();
+        String oldGraduationPath = mentorService.findID(mentor).get(0).getGraduationFiles().getGraduationFilePath();
+        String oldGraduationOriName = mentorService.findID(mentor).get(0).getGraduationFiles().getGraduationFileOriName();
+
+        newMentor.setProfiles(oldMentor.getProfiles());
+        newMentor.setCompanyFiles(oldMentor.getCompanyFiles());
+
         if(!graduation.isEmpty()){
             System.out.println("There is new Graduation file!");
 
@@ -556,6 +689,39 @@ public class MentorController {
             GraduationFiles oldGraduationFile = new GraduationFiles(oldGraduationOriName,oldGraduationName,oldGraduationPath);
             newMentor.setGraduationFiles(oldGraduationFile);
         }
+
+
+        mentorService.update(mentor_id, newMentor);
+
+        return newMentor;
+
+    }
+
+    @ResponseBody
+    @PostMapping("/mentors/join/modifyCompanyFile")
+    public Mentor modifyMentorCompanyFile(String mentor , HttpServletRequest request, @Valid MentorModifyForm mentorModifyForm, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile, @RequestParam("uploadGraduationFile") MultipartFile graduation,  @RequestParam("uploadCompanyFile") MultipartFile company) throws IOException, NullPointerException{
+        Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
+        Mentor oldMentor = mentorService.findID(mentor).get(0);
+        Mentor newMentor = new Mentor();
+        String serverUrl = getServerUrl(request);
+
+        newMentor.setIndex(mentor_id);
+        newMentor.setID(mentor);
+        newMentor.setPassword(oldMentor.getPassword());
+        newMentor.setName(oldMentor.getName());
+        newMentor.setSchool(oldMentor.getSchool());
+        newMentor.setGrade(oldMentor.getGrade());
+        newMentor.setSubject(oldMentor.getSubject());
+        newMentor.setCompany(oldMentor.getCompany());
+        newMentor.setShortIntroduce(oldMentor.getShortIntroduce());
+        newMentor.setLongIntroduce(oldMentor.getLongIntroduce());
+
+        String oldCompanyName = mentorService.findID(mentor).get(0).getCompanyFiles().getCompanyFileName();
+        String oldCompanyPath = mentorService.findID(mentor).get(0).getCompanyFiles().getCompanyFilePath();
+        String oldCompanyOriName = mentorService.findID(mentor).get(0).getCompanyFiles().getCompanyFileOriName();
+
+        newMentor.setProfiles(oldMentor.getProfiles());
+        newMentor.setGraduationFiles(oldMentor.getGraduationFiles());
 
         if(!company.isEmpty()){
             System.out.println("There is new Company file!");

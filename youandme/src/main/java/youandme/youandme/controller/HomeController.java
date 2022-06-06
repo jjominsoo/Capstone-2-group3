@@ -75,9 +75,10 @@ public class HomeController {
     }
 
 
-    @Scheduled(fixedDelay = 30000, initialDelay = 1000)
+    @Scheduled(fixedDelay = 300000, initialDelay = 1000)
     public void autoLogout(){
         adminService.setFalse();
+        log.info("Auto logout");
     }
 //    5분 지나면 자동 로그아웃
 
