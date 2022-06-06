@@ -588,7 +588,7 @@ public class MentorController {
 
     @ResponseBody
     @PostMapping("/mentors/join/modifyProfile")
-    public Mentor modifyMentorProfile(String mentor , HttpServletRequest request, @Valid MentorModifyForm mentorModifyForm, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile, @RequestParam("uploadGraduationFile") MultipartFile graduation,  @RequestParam("uploadCompanyFile") MultipartFile company) throws IOException, NullPointerException{
+    public Mentor modifyMentorProfile(String mentor , HttpServletRequest request, @Valid MentorModifyForm mentorModifyForm, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
         Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
         Mentor oldMentor = mentorService.findID(mentor).get(0);
         Mentor newMentor = new Mentor();
@@ -644,7 +644,7 @@ public class MentorController {
 
     @ResponseBody
     @PostMapping("/mentors/join/modifyGraduationFile")
-    public Mentor modifyMentorGraduationFile(String mentor , HttpServletRequest request, @Valid MentorModifyForm mentorModifyForm, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile, @RequestParam("uploadGraduationFile") MultipartFile graduation,  @RequestParam("uploadCompanyFile") MultipartFile company) throws IOException, NullPointerException{
+    public Mentor modifyMentorGraduationFile(String mentor , HttpServletRequest request, @Valid MentorModifyForm mentorModifyForm, @RequestParam("uploadGraduationFile") MultipartFile graduation) throws IOException, NullPointerException{
         Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
         Mentor oldMentor = mentorService.findID(mentor).get(0);
         Mentor newMentor = new Mentor();
@@ -699,7 +699,7 @@ public class MentorController {
 
     @ResponseBody
     @PostMapping("/mentors/join/modifyCompanyFile")
-    public Mentor modifyMentorCompanyFile(String mentor , HttpServletRequest request, @Valid MentorModifyForm mentorModifyForm, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile, @RequestParam("uploadGraduationFile") MultipartFile graduation,  @RequestParam("uploadCompanyFile") MultipartFile company) throws IOException, NullPointerException{
+    public Mentor modifyMentorCompanyFile(String mentor , HttpServletRequest request, @Valid MentorModifyForm mentorModifyForm,  @RequestParam("uploadCompanyFile") MultipartFile company) throws IOException, NullPointerException{
         Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
         Mentor oldMentor = mentorService.findID(mentor).get(0);
         Mentor newMentor = new Mentor();
