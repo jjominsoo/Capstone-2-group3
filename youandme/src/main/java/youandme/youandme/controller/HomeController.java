@@ -38,7 +38,7 @@ public class HomeController {
         }
         else{
             Administrator admin = adminService.findID(1);
-      
+
             if(admin.isAdmin_use()){
                 if(admin.isStatus()){
                     return "home";
