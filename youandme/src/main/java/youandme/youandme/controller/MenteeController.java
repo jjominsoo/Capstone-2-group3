@@ -2,6 +2,7 @@ package youandme.youandme.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,7 +15,10 @@ import youandme.youandme.service.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -60,14 +64,14 @@ public class MenteeController {
         }
         Mentee mentee = new Mentee();
 
-        if(profile != null){
+        mentee.setID(menteeForm.getID());
+        mentee.setPassword(menteeForm.getPassword());
+        mentee.setName(menteeForm.getName());
+        mentee.setSchool(menteeForm.getSchool());
+        mentee.setGrade(menteeForm.getGrade());
+        mentee.setSubject(menteeForm.getSubject());
 
-            mentee.setID(menteeForm.getID());
-            mentee.setPassword(menteeForm.getPassword());
-            mentee.setName(menteeForm.getName());
-            mentee.setSchool(menteeForm.getSchool());
-            mentee.setGrade(menteeForm.getGrade());
-            mentee.setSubject(menteeForm.getSubject());
+        if(!profile.isEmpty()){
 
             String serverUrl = getServerUrl(request);
             String profilePath =  serverUrl + "/images/";
@@ -77,9 +81,25 @@ public class MenteeController {
             profile.transferTo(saveProfilePath);
 
             mentee.setProfiles(profiles);
-            menteeService.join(mentee);
-
         }
+        else{
+
+
+            System.out.println("There is no Profile! Setting basic image..");
+            ClassPathResource resource = new ClassPathResource("templates/img/noImage.jpg");
+            String serverUrl = getServerUrl(request);
+            String profilePath =  serverUrl + "/images/";
+            String profileName =  UUID.randomUUID().toString()+"_"+resource.getFilename();
+            Profiles profiles = new Profiles(resource.getFilename(), profileName, profilePath);
+            Path saveProfilePath = Paths.get("./images/" + profileName);
+
+            //!!!!!하고 싶엇던거 프로필 입력 안하면 우리가 정해놓은 이미지가 들어가도록.
+            profile.transferTo(saveProfilePath);
+
+            mentee.setProfiles(profiles);
+        }
+
+        menteeService.join(mentee);
         return "home";
     }
     //=====================================================================================
@@ -328,56 +348,114 @@ public class MenteeController {
 
     //=======================================정보수정 (앱)==============================================
     @ResponseBody
-    @PostMapping("/mentees/join/modify")
-    public Mentee modifyMentee(String mentee, HttpServletRequest request, @Valid MenteeModifyForm menteeModifyForm, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
+    @PostMapping("/mentees/join/modifyFile")
+    public Mentee modifyMenteeFile(String mentee, HttpServletRequest request, @Valid MenteeModifyForm menteeModifyForm, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
         System.out.println("mentee = " + mentee);
 
         Long mentee_id = menteeService.findID(mentee).get(0).getIndex();
+        Mentee oldMentee = menteeService.findID(mentee).get(0);
         Mentee newMentee = new Mentee();
-        System.out.println("profile.getOriginalFilename() = " + profile.getOriginalFilename());
+        String serverUrl = getServerUrl(request);
+
+        newMentee.setIndex(mentee_id);
+        newMentee.setID(mentee);
+        newMentee.setPassword(oldMentee.getPassword());
+        newMentee.setName(oldMentee.getName());
+        newMentee.setSchool(oldMentee.getSchool());
+        newMentee.setGrade(oldMentee.getGrade());
+        newMentee.setSubject(oldMentee.getSubject());
+
+        String oldProfileName = menteeService.findID(mentee).get(0).getProfiles().getProfileName();
+        String oldProfilePath = menteeService.findID(mentee).get(0).getProfiles().getProfilePath();
+        String oldProfileOriName = menteeService.findID(mentee).get(0).getProfiles().getProfileOriName();
         if(!profile.isEmpty()){
+
             System.out.println("There is new Profile!");
-            newMentee.setID(mentee);
-            if(menteeModifyForm.getPassword().isEmpty()){
-                String newPassword = menteeService.findID(mentee).get(0).getPassword();
-                newMentee.setPassword(newPassword);
-            }
-            else{
-                newMentee.setPassword(menteeModifyForm.getPassword());
-            }
 
-            newMentee.setName(menteeModifyForm.getName());
-            newMentee.setSchool(menteeModifyForm.getSchool());
-            newMentee.setGrade(menteeModifyForm.getGrade());
-            newMentee.setSubject(menteeModifyForm.getSubject());
+            Path filePath = Paths.get("./images/" + oldProfileName);
+            System.out.println("filePath = " + filePath);
+            Files.delete(filePath);
 
 
-            String serverUrl = getServerUrl(request);
             String profilePath =  serverUrl + "/images/";
-            System.out.println("profile.toString() = " + profile.toString());
             String profileName =  UUID.randomUUID().toString()+"_"+profile.getOriginalFilename();
             Profiles newProfiles = new Profiles(profile.getOriginalFilename(), profileName, profilePath);
             Path saveProfilePath = Paths.get("./images/" + profileName);
             profile.transferTo(saveProfilePath);
 
             newMentee.setProfiles(newProfiles);
-            menteeService.update(mentee_id, newMentee);
+
         }
         else{
             System.out.println("There is no Profile!");
-            String oldProfileName = menteeService.findID(mentee).get(0).getProfiles().getProfileName();
-            String oldProfilePath = menteeService.findID(mentee).get(0).getProfiles().getProfilePath();
-            String oldProfileOriName = menteeService.findID(mentee).get(0).getProfiles().getProfileOriName();
 
 
-            newMentee.setPassword(menteeModifyForm.getPassword());
-            newMentee.setName(menteeModifyForm.getName());
-            newMentee.setSchool(menteeModifyForm.getSchool());
-            newMentee.setGrade(menteeModifyForm.getGrade());
-            newMentee.setSubject(menteeModifyForm.getSubject());
             Profiles oldProfiles = new Profiles(oldProfileOriName,oldProfileName, oldProfilePath);
             newMentee.setProfiles(oldProfiles);
         }
+
+        menteeService.update(mentee_id, newMentee);
+
+        return newMentee;
+
+    }
+
+    @ResponseBody
+    @PostMapping("/mentees/join/modifyInfo")
+    public Mentee modifyMenteeInfo(String mentee, HttpServletRequest request, @Valid MenteeModifyForm menteeModifyForm, @RequestParam(value = "uploadProfile", required = false) MultipartFile profile) throws IOException, NullPointerException{
+        System.out.println("mentee = " + mentee);
+
+        Long mentee_id = menteeService.findID(mentee).get(0).getIndex();
+        Mentee oldMentee = menteeService.findID(mentee).get(0);
+        Mentee newMentee = new Mentee();
+
+        newMentee.setIndex(mentee_id);
+        newMentee.setID(mentee);
+
+        if(!menteeModifyForm.getPassword().isEmpty()){
+            newMentee.setPassword(menteeModifyForm.getPassword());
+        }
+        else {
+            String oldPassword = menteeService.findID(mentee).get(0).getPassword();
+            newMentee.setPassword(oldPassword);
+        }
+
+        if(!menteeModifyForm.getName().isEmpty()){
+            newMentee.setName(menteeModifyForm.getName());
+        }
+        else {
+            String oldName = menteeService.findID(mentee).get(0).getName();
+            newMentee.setName(oldName);
+        }
+
+        if(!menteeModifyForm.getSchool().isEmpty()){
+            newMentee.setSchool(menteeModifyForm.getSchool());
+        }
+        else {
+            String oldSchool = menteeService.findID(mentee).get(0).getSchool();
+            newMentee.setSchool(oldSchool);
+        }
+
+        if(menteeModifyForm.getGrade() != null){
+            newMentee.setGrade(menteeModifyForm.getGrade());
+        }
+        else {
+            Float oldGrade = menteeService.findID(mentee).get(0).getGrade();
+            newMentee.setGrade(oldGrade);
+        }
+
+        if(!menteeModifyForm.getSubject().isEmpty()){
+            newMentee.setSubject(menteeModifyForm.getSubject());
+        }
+        else {
+            String oldSubject = menteeService.findID(mentee).get(0).getSubject();
+            newMentee.setSubject(oldSubject);
+        }
+
+
+        newMentee.setProfiles(oldMentee.getProfiles());
+
+        menteeService.update(mentee_id,newMentee);
 
         return newMentee;
 

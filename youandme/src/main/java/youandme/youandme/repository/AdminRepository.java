@@ -20,5 +20,6 @@ public class AdminRepository {
     public Administrator findID(int admin_index){
         return em.find(Administrator.class, admin_index);
     }
+
 }
 

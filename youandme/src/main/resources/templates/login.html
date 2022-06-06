@@ -15,7 +15,7 @@
     <p>
 <!--      <a class="btn btn-lg btn-secondary" href="/mentees/new">멘티 가입</a>-->
 <!--      <a class="btn btn-lg btn-secondary" href="/mentees">멘티 목록</a>-->
-      <form method="post" action="/login" th:object = "${admin}" >
+      <form method="post" action="/" th:object = "${admin}" >
         <p>ID :<input type="text" name="ID"></p>
         <p>PASSWORD :<input type=password name="password"></p>
         <button type="submit" class="btn btn-primary">제출</button>

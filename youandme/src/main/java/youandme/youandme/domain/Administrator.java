@@ -19,5 +19,7 @@ public class Administrator {
 
     private String ID;
     private String password;
+    private boolean status;
+    private boolean admin_use;
     //멘토 로그인
 }

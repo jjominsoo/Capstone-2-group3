@@ -25,5 +25,19 @@ public class AdminService {
         return adminRepository.findID(admin_index);
     }
 
+    @Transactional
+    public void setTrue() {
+        Administrator administrator = adminRepository.findID(1);
+        administrator.setStatus(true);
+        administrator.setAdmin_use(true);
+    }
+
+    @Transactional
+    public void setFalse(){
+        Administrator administrator = adminRepository.findID(1);
+        administrator.setStatus(false);
+        administrator.setAdmin_use(false);
+    }
+
 
 }

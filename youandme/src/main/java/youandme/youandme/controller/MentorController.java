@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -488,16 +489,36 @@ public class MentorController {
         Mentor newMentor = new Mentor();
         String serverUrl = getServerUrl(request);
 
+        newMentor.setIndex(mentor_id);
+        newMentor.setID(mentor);
         newMentor.setPassword(oldMentor.getPassword());
         newMentor.setName(oldMentor.getName());
         newMentor.setSchool(oldMentor.getSchool());
         newMentor.setGrade(oldMentor.getGrade());
         newMentor.setSubject(oldMentor.getSubject());
+        newMentor.setCompany(oldMentor.getCompany());
         newMentor.setShortIntroduce(oldMentor.getShortIntroduce());
         newMentor.setLongIntroduce(oldMentor.getLongIntroduce());
 
+        String oldProfileName = mentorService.findID(mentor).get(0).getProfiles().getProfileName();
+        String oldProfilePath = mentorService.findID(mentor).get(0).getProfiles().getProfilePath();
+        String oldProfileOriName = mentorService.findID(mentor).get(0).getProfiles().getProfileOriName();
+
+        String oldGraduationName = mentorService.findID(mentor).get(0).getGraduationFiles().getGraduationFileName();
+        String oldGraduationPath = mentorService.findID(mentor).get(0).getGraduationFiles().getGraduationFilePath();
+        String oldGraduationOriName = mentorService.findID(mentor).get(0).getGraduationFiles().getGraduationFileOriName();
+
+        String oldCompanyName = mentorService.findID(mentor).get(0).getCompanyFiles().getCompanyFileName();
+        String oldCompanyPath = mentorService.findID(mentor).get(0).getCompanyFiles().getCompanyFilePath();
+        String oldCompanyOriName = mentorService.findID(mentor).get(0).getCompanyFiles().getCompanyFileOriName();
+
         if(!profile.isEmpty()){
             System.out.println("There is new Profile!");
+
+            Path filePath = Paths.get("./images/" + oldProfileName);
+            System.out.println("filePath = " + filePath);
+            Files.delete(filePath);
+
             String profilePath =  serverUrl + "/images/";
             String profileName =  UUID.randomUUID().toString()+"_"+profile.getOriginalFilename();
             Profiles profiles = new Profiles(profile.getOriginalFilename(), profileName, profilePath);
@@ -508,9 +529,7 @@ public class MentorController {
         }
         else{
             System.out.println("There is no Profile!");
-            String oldProfileName = mentorService.findID(mentor).get(0).getProfiles().getProfileName();
-            String oldProfilePath = mentorService.findID(mentor).get(0).getProfiles().getProfilePath();
-            String oldProfileOriName = mentorService.findID(mentor).get(0).getProfiles().getProfileOriName();
+
             Profiles oldProfiles = new Profiles(oldProfileOriName, oldProfileName, oldProfilePath);
             newMentor.setProfiles(oldProfiles);
 
@@ -518,6 +537,11 @@ public class MentorController {
 
         if(!graduation.isEmpty()){
             System.out.println("There is new Graduation file!");
+
+            Path filePath = Paths.get("./graduation_certification/" + oldGraduationName);
+            System.out.println("filePath = " + filePath);
+            Files.delete(filePath);
+
             String GraduationPath =  serverUrl + "/graduation_certification/";
             String GraduationName =  UUID.randomUUID().toString()+"_"+graduation.getOriginalFilename();
             GraduationFiles graduationFiles  = new GraduationFiles(graduation.getOriginalFilename(), GraduationName, GraduationPath);
@@ -527,9 +551,7 @@ public class MentorController {
         }
         else{
             System.out.println("There is no Graduation file!");
-            String oldGraduationName = mentorService.findID(mentor).get(0).getGraduationFiles().getGraduationFileName();
-            String oldGraduationPath = mentorService.findID(mentor).get(0).getGraduationFiles().getGraduationFilePath();
-            String oldGraduationOriName = mentorService.findID(mentor).get(0).getGraduationFiles().getGraduationFileOriName();
+
 
             GraduationFiles oldGraduationFile = new GraduationFiles(oldGraduationOriName,oldGraduationName,oldGraduationPath);
             newMentor.setGraduationFiles(oldGraduationFile);
@@ -537,6 +559,11 @@ public class MentorController {
 
         if(!company.isEmpty()){
             System.out.println("There is new Company file!");
+
+            Path filePath = Paths.get("./company_certification/" + oldCompanyName);
+            System.out.println("filePath = " + filePath);
+            Files.delete(filePath);
+
             String CompanyPath =  serverUrl + "/company_certification/";
             String CompanyName =  UUID.randomUUID().toString()+"_"+company.getOriginalFilename();
             CompanyFiles companyFiles = new CompanyFiles(company.getOriginalFilename(), CompanyName, CompanyPath);
@@ -546,15 +573,14 @@ public class MentorController {
         }
         else{
             System.out.println("There is no Company file!");
-            String oldCompanyName = mentorService.findID(mentor).get(0).getCompanyFiles().getCompanyFileName();
-            String oldCompanyPath = mentorService.findID(mentor).get(0).getCompanyFiles().getCompanyFilePath();
-            String oldCompanyOriName = mentorService.findID(mentor).get(0).getCompanyFiles().getCompanyFileOriName();
+
 
             CompanyFiles oldCompanyFile = new CompanyFiles(oldCompanyOriName,oldCompanyName,oldCompanyPath);
             newMentor.setCompanyFiles(oldCompanyFile);
         }
-        // 증명서도 다시 받을 수 있게 할까??
+
         mentorService.update(mentor_id, newMentor);
+
         return newMentor;
 
     }
@@ -566,6 +592,9 @@ public class MentorController {
 
         Mentor oldMentor = mentorService.findID(mentor).get(0);
         Mentor newMentor = new Mentor();
+
+        newMentor.setIndex(mentor_id);
+        newMentor.setID(mentor);
         if(!mentorModifyForm.getPassword().isEmpty()){
             newMentor.setPassword(mentorModifyForm.getPassword());
         }
@@ -632,9 +661,6 @@ public class MentorController {
         newMentor.setGraduationFiles(oldMentor.getGraduationFiles());
         newMentor.setCompanyFiles(oldMentor.getCompanyFiles());
 
-
-
-        // 증명서도 다시 받을 수 있게 할까??
         mentorService.update(mentor_id, newMentor);
         return newMentor;
 
