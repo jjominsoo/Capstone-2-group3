@@ -22,7 +22,7 @@ fieldError' : 'form-control'">
         </div>
         <div class="form-group">
             <label th:for="city">비밀번호</label>
-            <input type="text" th:field="*{password}" class="form-control"
+            <input type="password" th:field="*{password}" class="form-control"
                    placeholder="비밀번호를 입력하세요">
         </div>
         <div class="form-group">
@@ -49,6 +49,17 @@ fieldError' : 'form-control'">
             <label th:for="company">회사</label>
             <input type="text" th:field="*{company}" class="form-control"
                    placeholder="재직중인 회사를 입력하세요">
+        </div>
+
+        <div class="form-group">
+            <label th:for="shortIntroduce">회사</label>
+            <input type="text" th:field="*{shortIntroduce}" class="form-control"
+                   placeholder="한줄 자기소개를 적어주세요">
+        </div>
+        <div class="form-group">
+            <label th:for="longIntroduce">회사</label>
+            <input type="text" th:field="*{longIntroduce}" class="form-control"
+                   placeholder="상세한 자기소개를 적어주세요">
         </div>
 
         <div class="form-group">

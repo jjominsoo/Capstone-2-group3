@@ -2,6 +2,7 @@ package youandme.youandme.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -73,29 +74,65 @@ public class MentorController {
 
         String serverUrl = getServerUrl(request);
 
+        if(!profile.isEmpty()) {
+            String ProfilePath = serverUrl + "/images/";// + mentorForm.getID() +"/";
+            String ProfileName = UUID.randomUUID().toString() + "_" + profile.getOriginalFilename();
+            Profiles profiles = new Profiles(profile.getOriginalFilename(), ProfileName, ProfilePath);
+            Path saveProfilePath = Paths.get("./images/" + ProfileName);
+            profile.transferTo(saveProfilePath);
+            mentor.setProfiles(profiles);
+        }
+        else{
+            System.out.println("There is no Profile! Setting basic image..");
+            ClassPathResource resource = new ClassPathResource("templates/img/noImage.jpg");
+            String profilePath =  serverUrl + "/images/";
+            String profileName =  UUID.randomUUID().toString()+"_"+resource.getFilename();
+            Profiles profiles = new Profiles(resource.getFilename(), profileName, profilePath);
+            Path saveProfilePath = Paths.get("./images/" + profileName);
+            profile.transferTo(saveProfilePath);
+            mentor.setProfiles(profiles);
+        }
+        if(!graduation.isEmpty()) {
+            String GraduationPath = serverUrl + "/graduation_certification/";//+ mentorForm.getID() +"/";
+            String GraduationName = UUID.randomUUID().toString() + "_" + graduation.getOriginalFilename();
+            GraduationFiles graduationFiles = new GraduationFiles(graduation.getOriginalFilename(), GraduationName, GraduationPath);
+            Path saveGraduationPath = Paths.get("./graduation_certification/" + GraduationName);
+            graduation.transferTo(saveGraduationPath);
+            mentor.setGraduationFiles(graduationFiles);
+        }
+        else{
+            System.out.println("There is no Profile! Setting basic image..");
+            ClassPathResource resource = new ClassPathResource("templates/img/noImage.jpg");
+            String GraduationPath = serverUrl + "/graduation_certification/";//+ mentorForm.getID() +"/";
+            String GraduationName = UUID.randomUUID().toString() + "_" +resource.getFilename();
+            GraduationFiles graduationFiles = new GraduationFiles(resource.getFilename(), GraduationName, GraduationPath);
+            Path saveGraduationPath = Paths.get("./graduation_certification/" + GraduationName);
+            profile.transferTo(saveGraduationPath);
+            mentor.setGraduationFiles(graduationFiles);
+        }
 
-        String ProfilePath =  serverUrl + "/images/";// + mentorForm.getID() +"/";
-        String ProfileName =  UUID.randomUUID().toString()+"_"+profile.getOriginalFilename();
-        Profiles profiles = new Profiles(profile.getOriginalFilename(), ProfileName, ProfilePath);
-        Path saveProfilePath = Paths.get("./images/" + ProfileName);
-        profile.transferTo(saveProfilePath);
+        if(!company.isEmpty()) {
+            String CompanyPath = serverUrl + "/company_certification/";//+ mentorForm.getID() +"/";
+            String CompanyName = UUID.randomUUID().toString() + "_" + company.getOriginalFilename();
+            CompanyFiles companyFiles = new CompanyFiles(company.getOriginalFilename(), CompanyName, CompanyPath);
+            Path saveCompanyPath = Paths.get("./company_certification/" + CompanyName);
+            company.transferTo(saveCompanyPath);
+            mentor.setCompanyFiles(companyFiles);
+        }
+        else{
+            System.out.println("There is no Profile! Setting basic image..");
+            ClassPathResource resource = new ClassPathResource("templates/img/noImage.jpg");
+            String CompanyPath = serverUrl + "/company_certification/";//+ mentorForm.getID() +"/";
+            String CompanyName = UUID.randomUUID().toString() + "_" + resource.getFilename();
+            CompanyFiles companyFiles = new CompanyFiles(resource.getFilename(), CompanyName, CompanyPath);
+            Path saveCompanyPath = Paths.get("./company_certification/" + CompanyName);
+            company.transferTo(saveCompanyPath);
+            mentor.setCompanyFiles(companyFiles);
+        }
 
-        String GraduationPath =  serverUrl + "/graduation_certification/";//+ mentorForm.getID() +"/";
-        String GraduationName =  UUID.randomUUID().toString()+"_"+graduation.getOriginalFilename();
-        GraduationFiles graduationFiles  = new GraduationFiles(graduation.getOriginalFilename(), GraduationName, GraduationPath);
-        Path saveGraduationPath = Paths.get("./graduation_certification/" + GraduationName);
-        graduation.transferTo(saveGraduationPath);
-
-        String CompanyPath =  serverUrl + "/company_certification/";//+ mentorForm.getID() +"/";
-        String CompanyName =  UUID.randomUUID().toString()+"_"+company.getOriginalFilename();
-        CompanyFiles companyFiles = new CompanyFiles(company.getOriginalFilename(), CompanyName, CompanyPath);
-        Path saveCompanyPath = Paths.get("./company_certification/" + CompanyName);
-        company.transferTo(saveCompanyPath);
 
 
-        mentor.setProfiles(profiles);
-        mentor.setGraduationFiles(graduationFiles);
-        mentor.setCompanyFiles(companyFiles);
+
 
         if(!mentorForm.getShortIntroduce().isEmpty()){
             mentor.setShortIntroduce(mentorForm.getShortIntroduce());

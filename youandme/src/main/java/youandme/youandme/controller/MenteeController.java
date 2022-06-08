@@ -87,8 +87,6 @@ public class MenteeController {
             mentee.setProfiles(profiles);
         }
         else{
-
-
             System.out.println("There is no Profile! Setting basic image..");
             ClassPathResource resource = new ClassPathResource("templates/img/noImage.jpg");
             String serverUrl = getServerUrl(request);
