@@ -73,4 +73,16 @@ public class MentorService {
         return mentorRepository.findMatching(school, grade, subject);
     }
 
+    public List<Mentor> findSchoolMatching(String school){
+        return mentorRepository.findSchoolMatching(school);
+    }
+
+    public List<Mentor> findGradeMatching(Float grade){
+        return mentorRepository.findGradeMatching(grade);
+    }
+
+    public List<Mentor> findSubjectMatching(String subject){
+        return mentorRepository.findSubjectMatching(subject);
+    }
+
 }

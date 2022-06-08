@@ -43,15 +43,33 @@ public class MentorRepository {
                 .setParameter("school", school)
                 .setParameter("grade1", grade1)
                 .setParameter("grade2", grade2)
-
-                //소숫점 단위로 영역화가 불가능? grade-0.5하면 안됨
-                //10을 곱해서 정수로 만들어버리자
-                
-                
-                //앱에서 학교 : 서울대 / 연세대 / 고려대 / 중앙대 .. 이런식으로 리스트를 주고 거기서 선택하도록 하고
-                //과목도 마찬가지로 : 건축학과 / 간호학과 / 컴퓨터공학과 .. 이런식으로 하면 찾기 편할듯
-               .setParameter("subject", subject)
+                .setParameter("subject", subject)
                 .getResultList();
 
     }
+
+    public List<Mentor> findSchoolMatching(String school){
+        return em.createQuery("select m from Mentor m where m.school = :school", Mentor.class)
+                .setParameter("school", school)
+                .getResultList();
+
+    }
+
+    public List<Mentor> findGradeMatching(Float grade){
+        float grade1 = (float) (grade - 0.5);
+        float grade2 = (float) (grade + 0.5);
+        return em.createQuery("select m from Mentor m where m.grade between :grade1 and :grade2", Mentor.class)
+                .setParameter("grade1", grade1)
+                .setParameter("grade2", grade2)
+                .getResultList();
+
+    }
+
+    public List<Mentor> findSubjectMatching(String subject){
+        return em.createQuery("select m from Mentor m where m.subject = :subject", Mentor.class)
+                .setParameter("subject", subject)
+                .getResultList();
+
+    }
+
 }

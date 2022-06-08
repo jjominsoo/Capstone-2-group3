@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -62,8 +64,6 @@ public class MentorController {
         Mentor mentor = new Mentor();
 
         mentor.setID(mentorForm.getID());
-        mentor.setPassword(mentorForm.getPassword());
-
         mentor.setName(mentorForm.getName());
         mentor.setSchool(mentorForm.getSchool());
         mentor.setGrade(mentorForm.getGrade());
@@ -112,9 +112,38 @@ public class MentorController {
         }
 
         mentorService.join(mentor);
-
+        MentorHash hash = new MentorHash();
+        String hashedPassword = hash.hashPassword(mentor.getIndex().toString(), mentorForm.getPassword());
+        mentor.setPassword(hashedPassword);
+        mentorService.update(mentor.getIndex(),mentor);
         return "home";
 
+    }
+    class MentorHash{
+
+        public String hashPassword(String mentor_index, String insertPassword) {
+            byte[] salt = mentor_index.getBytes();
+            byte[] a = insertPassword.getBytes();
+            byte[] bytes = new byte[a.length + salt.length];
+
+            System.arraycopy(a,0,bytes,0,a.length);
+            System.arraycopy(salt,0,bytes,a.length,salt.length);
+
+            String hashedPassword = null;
+            try{
+                MessageDigest md = MessageDigest.getInstance("SHA-256");
+                md.update(bytes);
+                byte[] byteData = md.digest();
+                StringBuffer sb = new StringBuffer();
+                for(int i = 0 ; i < byteData.length ; i++){
+                    sb.append(Integer.toString((byteData[i]&0xFF) + 256, 16).substring(1));
+                }
+                hashedPassword = sb.toString();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+            return hashedPassword;
+        }
     }
     //=====================================================================================
 
@@ -205,19 +234,23 @@ public class MentorController {
         MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
         List<Mentor> mentors = mentorService.findID(mentorJoinForm.getID());
 
+        MentorHash hash = new MentorHash();
+        String hashPassword = hash.hashPassword(mentors.get(0).getIndex().toString(), mentorJoinForm.getPassword());
+
         if(mentors.isEmpty()){
             System.out.println("no such ID");
             mobileMentorJoinForm.setStatus(false);
             return mobileMentorJoinForm;
 
         }
-        else if(!mentors.get(0).getPassword().equals(mentorJoinForm.getPassword())){
+        else if(!mentors.get(0).getPassword().equals(hashPassword)){
             System.out.println("wrong password");
             mobileMentorJoinForm.setStatus(false);
             return mobileMentorJoinForm;
         }
 
         mobileMentorJoinForm.setIndex(mentors.get(0).getIndex());
+        mobileMentorJoinForm.setID(mentors.get(0).getID());
         mobileMentorJoinForm.setName(mentors.get(0).getName());
         mobileMentorJoinForm.setGrade(mentors.get(0).getGrade());
         mobileMentorJoinForm.setSchool(mentors.get(0).getSchool());
@@ -226,7 +259,7 @@ public class MentorController {
         mobileMentorJoinForm.setProfileFilePath(mentors.get(0).getProfiles().getProfilePath() + mentors.get(0).getProfiles().getProfileName());
         mobileMentorJoinForm.setStatus(true);
         mobileMentorJoinForm.setPass(mentors.get(0).isPass());
-        //!!! status, pass 다 필요없지 않느냐
+
         mobileMentorJoinForm.setShortIntroduce(mentors.get(0).getShortIntroduce());
         mobileMentorJoinForm.setLongIntroduce(mentors.get(0).getLongIntroduce());
 

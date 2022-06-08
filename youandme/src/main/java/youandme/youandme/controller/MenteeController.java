@@ -1,6 +1,7 @@
 package youandme.youandme.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.aspectj.bridge.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
@@ -18,9 +19,12 @@ import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -65,7 +69,7 @@ public class MenteeController {
         Mentee mentee = new Mentee();
 
         mentee.setID(menteeForm.getID());
-        mentee.setPassword(menteeForm.getPassword());
+
         mentee.setName(menteeForm.getName());
         mentee.setSchool(menteeForm.getSchool());
         mentee.setGrade(menteeForm.getGrade());
@@ -98,9 +102,41 @@ public class MenteeController {
 
             mentee.setProfiles(profiles);
         }
-
         menteeService.join(mentee);
+
+        MenteeHash hash = new MenteeHash();
+
+        String hashedPassword = hash.hashPassword(mentee.getIndex().toString(), menteeForm.getPassword());
+        mentee.setPassword(hashedPassword);
+        menteeService.update(mentee.getIndex(),mentee);
         return "home";
+    }
+
+    class MenteeHash{
+
+        public String hashPassword(String mentee_index, String insertPassword) {
+            byte[] salt = mentee_index.getBytes();
+            byte[] a = insertPassword.getBytes();
+            byte[] bytes = new byte[a.length + salt.length];
+
+            System.arraycopy(a,0,bytes,0,a.length);
+            System.arraycopy(salt,0,bytes,a.length,salt.length);
+
+            String hashedPassword = null;
+            try{
+                MessageDigest md = MessageDigest.getInstance("SHA-256");
+                md.update(bytes);
+                byte[] byteData = md.digest();
+                StringBuffer sb = new StringBuffer();
+                for(int i = 0 ; i < byteData.length ; i++){
+                    sb.append(Integer.toString((byteData[i]&0xFF) + 256, 16).substring(1));
+                }
+                hashedPassword = sb.toString();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+            return hashedPassword;
+        }
     }
     //=====================================================================================
 
@@ -141,13 +177,17 @@ public class MenteeController {
         MobileMenteeJoinForm mobileMenteeJoinForm = new MobileMenteeJoinForm();
         List<Mentee> mentees = menteeService.findID(menteeJoinForm.getID());
 
+        MenteeHash hash = new MenteeHash();
+        String hashPassword = hash.hashPassword(mentees.get(0).getIndex().toString(), menteeJoinForm.getPassword());
+
         if(mentees.isEmpty()){
             System.out.println("no such ID");
             mobileMenteeJoinForm.setStatus(false);
             return mobileMenteeJoinForm;
 
         }
-        else if(!mentees.get(0).getPassword().equals(menteeJoinForm.getPassword())){
+
+        else if(!mentees.get(0).getPassword().equals(hashPassword)){
             System.out.println("wrong password");
             mobileMenteeJoinForm.setStatus(false);
             return mobileMenteeJoinForm;
@@ -502,7 +542,130 @@ public class MenteeController {
         }
         return mobileMentorJoinFormsList;
     }
-    //=====================================================================================
+
+    @ResponseBody
+    @GetMapping("/mentorsSchoolMatchingList")
+    public List<MobileMentorJoinForm> mentorSchoolMatchingList(@Valid MatchingForm matchingForm){
+        List<Mentor> mentors = mentorService.findSchoolMatching(matchingForm.getSchool());
+
+        List<MobileMentorJoinForm> mobileMentorJoinFormsList = new ArrayList<>();
+        if(mentors.isEmpty()){
+            return mobileMentorJoinFormsList;
+        }
+
+        for(Mentor mentor : mentors){
+            if(mentor.isPass()) {
+                MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
+                mobileMentorJoinForm.setIndex(mentor.getIndex());
+                mobileMentorJoinForm.setID(mentor.getID());
+                mobileMentorJoinForm.setName(mentor.getName());
+                mobileMentorJoinForm.setSchool(mentor.getSchool());
+                mobileMentorJoinForm.setGrade(mentor.getGrade());
+                mobileMentorJoinForm.setSubject(mentor.getSubject());
+                mobileMentorJoinForm.setCompany(mentor.getCompany());
+                mobileMentorJoinForm.setProfileFilePath(mentor.getProfiles().getProfilePath()+mentor.getProfiles().getProfileName());
+                mobileMentorJoinForm.setPass(mentor.isPass());
+                if(!mentor.getShortIntroduce().isEmpty()){
+                    mobileMentorJoinForm.setShortIntroduce(mentor.getShortIntroduce());
+                }
+                else {
+                    mobileMentorJoinForm.setShortIntroduce("안녕하세요 "+ mentor.getName() +"입니다");
+                }
+
+                if(!mentor.getLongIntroduce().isEmpty()){
+                    mobileMentorJoinForm.setLongIntroduce(mentor.getLongIntroduce());
+                }
+                else {
+                    mobileMentorJoinForm.setLongIntroduce("안녕하세요 "+mentor.getName() +"입니다");
+                }
+                mobileMentorJoinFormsList.add(mobileMentorJoinForm);
+            }
+        }
+        return mobileMentorJoinFormsList;
+    }
+
+    @ResponseBody
+    @GetMapping("/mentorsGradeMatchingList")
+    public List<MobileMentorJoinForm> mentorGradeMatchingList(@Valid MatchingForm matchingForm){
+        List<Mentor> mentors = mentorService.findGradeMatching(matchingForm.getGrade());
+
+        List<MobileMentorJoinForm> mobileMentorJoinFormsList = new ArrayList<>();
+        if(mentors.isEmpty()){
+            return mobileMentorJoinFormsList;
+        }
+
+        for(Mentor mentor : mentors){
+            if(mentor.isPass()) {
+                MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
+                mobileMentorJoinForm.setIndex(mentor.getIndex());
+                mobileMentorJoinForm.setID(mentor.getID());
+                mobileMentorJoinForm.setName(mentor.getName());
+                mobileMentorJoinForm.setSchool(mentor.getSchool());
+                mobileMentorJoinForm.setGrade(mentor.getGrade());
+                mobileMentorJoinForm.setSubject(mentor.getSubject());
+                mobileMentorJoinForm.setCompany(mentor.getCompany());
+                mobileMentorJoinForm.setProfileFilePath(mentor.getProfiles().getProfilePath()+mentor.getProfiles().getProfileName());
+                mobileMentorJoinForm.setPass(mentor.isPass());
+                if(!mentor.getShortIntroduce().isEmpty()){
+                    mobileMentorJoinForm.setShortIntroduce(mentor.getShortIntroduce());
+                }
+                else {
+                    mobileMentorJoinForm.setShortIntroduce("안녕하세요 "+ mentor.getName() +"입니다");
+                }
+
+                if(!mentor.getLongIntroduce().isEmpty()){
+                    mobileMentorJoinForm.setLongIntroduce(mentor.getLongIntroduce());
+                }
+                else {
+                    mobileMentorJoinForm.setLongIntroduce("안녕하세요 "+mentor.getName() +"입니다");
+                }
+                mobileMentorJoinFormsList.add(mobileMentorJoinForm);
+            }
+        }
+        return mobileMentorJoinFormsList;
+    }
+
+    @ResponseBody
+    @GetMapping("/mentorsSubjectMatchingList")
+    public List<MobileMentorJoinForm> mentorSubjectMatchingList(@Valid MatchingForm matchingForm){
+        List<Mentor> mentors = mentorService.findSubjectMatching(matchingForm.getSubject());
+
+        List<MobileMentorJoinForm> mobileMentorJoinFormsList = new ArrayList<>();
+        if(mentors.isEmpty()){
+            return mobileMentorJoinFormsList;
+        }
+
+        for(Mentor mentor : mentors){
+            if(mentor.isPass()) {
+                MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
+                mobileMentorJoinForm.setIndex(mentor.getIndex());
+                mobileMentorJoinForm.setID(mentor.getID());
+                mobileMentorJoinForm.setName(mentor.getName());
+                mobileMentorJoinForm.setSchool(mentor.getSchool());
+                mobileMentorJoinForm.setGrade(mentor.getGrade());
+                mobileMentorJoinForm.setSubject(mentor.getSubject());
+                mobileMentorJoinForm.setCompany(mentor.getCompany());
+                mobileMentorJoinForm.setProfileFilePath(mentor.getProfiles().getProfilePath()+mentor.getProfiles().getProfileName());
+                mobileMentorJoinForm.setPass(mentor.isPass());
+                if(!mentor.getShortIntroduce().isEmpty()){
+                    mobileMentorJoinForm.setShortIntroduce(mentor.getShortIntroduce());
+                }
+                else {
+                    mobileMentorJoinForm.setShortIntroduce("안녕하세요 "+ mentor.getName() +"입니다");
+                }
+
+                if(!mentor.getLongIntroduce().isEmpty()){
+                    mobileMentorJoinForm.setLongIntroduce(mentor.getLongIntroduce());
+                }
+                else {
+                    mobileMentorJoinForm.setLongIntroduce("안녕하세요 "+mentor.getName() +"입니다");
+                }
+                mobileMentorJoinFormsList.add(mobileMentorJoinForm);
+            }
+        }
+        return mobileMentorJoinFormsList;
+    }
+    //==============================================================================================================
     //========================================좋아요 누른 멘토들 리스트 (앱)=============================================
     @ResponseBody
     @GetMapping("/mentees/likeList")
