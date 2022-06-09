@@ -262,6 +262,15 @@ public class MentorController {
 
         return chat;
     }
+
+    @ResponseBody
+    @GetMapping("/mentors/join/adminChat")
+    public List<Chat> readAdminChat(String mentor){
+        Long mentor_id = mentorService.findID(mentor).get(0).getIndex();
+        List<Chat> chatList = chatService.findChat(1L, mentor_id);
+        return chatList;
+
+    }
     //=====================================================================================
 
     //======================================멘토 로그인 (앱)===============================================
