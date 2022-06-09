@@ -507,16 +507,24 @@ public class MenteeController {
     //=====================================추천 멘토 리스트 (앱)================================================
     @ResponseBody
     @GetMapping("/mentorsMatchingList")
-    public List<MobileMentorJoinForm> mentorMatchingList(@Valid MatchingForm matchingForm){
+    public List<MobileMentorJoinForm> mentorMatchingList(String mentee, @Valid MatchingForm matchingForm){
         List<Mentor> mentors = mentorService.findMatching(matchingForm.getSchool(), matchingForm.getGrade(), matchingForm.getSubject());
 
         List<MobileMentorJoinForm> mobileMentorJoinFormsList = new ArrayList<>();
         if(mentors.isEmpty()){
             return mobileMentorJoinFormsList;
         }
+        Mentee mentees = menteeService.findID(mentee).get(0);
+        List<Like> likeList = likeService.findLike(mentees.getIndex());
 
+        Loop1:
         for(Mentor mentor : mentors){
             if(mentor.isPass()) {
+                for(Like likes : likeList){
+                    if(likes.getMentor_index() == mentor.getIndex()){
+                        continue Loop1;
+                    }
+                }
                 MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
                 mobileMentorJoinForm.setIndex(mentor.getIndex());
                 mobileMentorJoinForm.setID(mentor.getID());
@@ -682,7 +690,13 @@ public class MenteeController {
             Mentor mentor = mentorService.findOne(like.getMentor_index());
             List<Chat> chatList = chatService.findChat(like.getMentee_index(),like.getMentor_index());
             Chat lastChat = chatList.get(chatList.size()-1);
-            mobileMentorJoinForm.setText(lastChat.getText());
+            if(!lastChat.getText().isEmpty()){
+                mobileMentorJoinForm.setText(lastChat.getText());
+            }
+            else{
+                mobileMentorJoinForm.setText("");
+            }
+
 
 
             mobileMentorJoinForm.setIndex(mentor.getIndex());
