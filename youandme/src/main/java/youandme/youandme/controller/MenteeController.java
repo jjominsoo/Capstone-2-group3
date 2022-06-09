@@ -101,9 +101,7 @@ public class MenteeController {
             mentee.setProfiles(profiles);
         }
         menteeService.join(mentee);
-
         MenteeHash hash = new MenteeHash();
-
         String hashedPassword = hash.hashPassword(mentee.getIndex(), menteeForm.getPassword());
         mentee.setPassword(hashedPassword);
         menteeService.update(mentee.getIndex(),mentee);

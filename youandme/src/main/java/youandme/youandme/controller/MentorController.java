@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -150,7 +151,7 @@ public class MentorController {
 
         mentorService.join(mentor);
         MentorHash hash = new MentorHash();
-        String hashedPassword = hash.hashPassword(mentor.getIndex().toString(), mentorForm.getPassword());
+        String hashedPassword = hash.hashPassword(mentor.getIndex(), mentorForm.getPassword());
         mentor.setPassword(hashedPassword);
         mentorService.update(mentor.getIndex(),mentor);
         return "home";
@@ -158,8 +159,8 @@ public class MentorController {
     }
     class MentorHash{
 
-        public String hashPassword(String mentor_index, String insertPassword) {
-            byte[] salt = mentor_index.getBytes();
+        public String hashPassword(Long mentor_index, String insertPassword) {
+            byte[] salt = mentor_index.toString().getBytes();
             byte[] a = insertPassword.getBytes();
             byte[] bytes = new byte[a.length + salt.length];
 
@@ -832,6 +833,7 @@ public class MentorController {
 
         newMentor.setIndex(mentor_id);
         newMentor.setID(mentor);
+
         if(!mentorModifyForm.getPassword().isEmpty()){
             newMentor.setPassword(mentorModifyForm.getPassword());
         }
@@ -918,8 +920,8 @@ public class MentorController {
             MobileMenteeJoinForm mobileMenteeJoinForm = new MobileMenteeJoinForm();
             Mentee mentee = menteeService.findOne(like.getMentee_index());
             List<Chat> chatList = chatService.findChat(like.getMentee_index(),like.getMentor_index());
-            Chat lastChat = chatList.get(chatList.size()-1);
-            if(!lastChat.getText().isEmpty()){
+            if(!chatList.isEmpty()){
+                Chat lastChat = chatList.get(chatList.size()-1);
                 mobileMenteeJoinForm.setText(lastChat.getText());
             }
             else{
