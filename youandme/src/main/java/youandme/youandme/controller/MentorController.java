@@ -835,11 +835,16 @@ public class MentorController {
         newMentor.setID(mentor);
 
         if(!mentorModifyForm.getPassword().isEmpty()){
-            newMentor.setPassword(mentorModifyForm.getPassword());
+            MentorHash hash = new MentorHash();
+            String hashedPassword = hash.hashPassword(mentor_id, mentorModifyForm.getPassword());
+            newMentor.setPassword(hashedPassword);
+
         }
         else {
             String oldPassword = mentorService.findID(mentor).get(0).getPassword();
-            newMentor.setPassword(oldPassword);
+            MentorHash hash = new MentorHash();
+            String hashedPassword = hash.hashPassword(mentor_id, oldPassword);
+            newMentor.setPassword(hashedPassword);
         }
 
         if(!mentorModifyForm.getName().isEmpty()){
