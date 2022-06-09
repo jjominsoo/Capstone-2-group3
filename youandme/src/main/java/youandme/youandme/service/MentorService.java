@@ -44,10 +44,15 @@ public class MentorService {
 
     @Modifying
     @Transactional
-    public void resave(Mentor mentor){
+    public void pass(Mentor mentor){
         mentorRepository.pass(mentor);
     }
 
+    @Modifying
+    @Transactional
+    public void nonPass(Mentor mentor){
+        mentorRepository.nonPass(mentor);
+    }
 
     private void validateDuplicateMentor(Mentor mentor) {
         List<Mentor> findMentors = mentorRepository.findID(mentor.getID());

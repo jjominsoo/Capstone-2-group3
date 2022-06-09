@@ -17,5 +17,6 @@ public class MobileMentorJoinForm {
     private boolean pass;
     private String shortIntroduce;
     private String longIntroduce;
+    private String text;
     //모바일로 보내는 멘토 폼
 }

@@ -20,8 +20,7 @@ public class LikeService {
 
     @Transactional
     public void save(Like like){
-//        validateDuplicateLike(like);
-        likeRepository.save(like);
+        validateDuplicateLike(like);
     }
 
     @Transactional
@@ -30,16 +29,10 @@ public class LikeService {
     }
 
     @Transactional
-    public List<Like> findLiked(Long mentee_index){
+    public List<Like> findLiked(Long mentor_index){
 
-        return likeRepository.findLiked(mentee_index);
+        return likeRepository.findLiked(mentor_index);
     }
-
-
-//    @Transactional
-//    public List<Like> unliked(Long mentee_index, Long mentor_index){
-//        return likeRepository.unliked(mentee_index,mentor_index);
-//    }
 
 
     public List<Like> findUnliked(Long mentee_id, Long mentor_id){
@@ -52,12 +45,22 @@ public class LikeService {
     }
 
 
-//    private void validateDuplicateLike(Like like) {
-//        List<Like> findLikes = likeRepository.findLiked(like.getMentee_index());
-//        System.out.println("ss = " + findLikes.get(0).getMentor_index() );
-//        if(findLikes.get(0).getMentor_index() ==  like.getMentor_index()){
-//            throw new IllegalStateException("Already Liked!");
-//        }
-//    } 좋아요 중복으로 누르면 그대로 저장됨 (전부)
+    private void validateDuplicateLike(Like like) {
+        List<Like> findLikes = likeRepository.findLike(like.getMentee_index());
+        if(!findLikes.isEmpty()){
+            for( Like like1 : findLikes){
+                if(like1.getMentor_index() ==  like.getMentor_index()){
+
+                }
+                else{
+                    likeRepository.save(like);
+                }
+            }
+        }else{
+            likeRepository.save(like);
+        }
+
+
+    }
 
 }

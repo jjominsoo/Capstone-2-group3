@@ -104,7 +104,7 @@ public class MenteeController {
 
         MenteeHash hash = new MenteeHash();
 
-        String hashedPassword = hash.hashPassword(mentee.getIndex().toString(), menteeForm.getPassword());
+        String hashedPassword = hash.hashPassword(mentee.getIndex(), menteeForm.getPassword());
         mentee.setPassword(hashedPassword);
         menteeService.update(mentee.getIndex(),mentee);
         return "home";
@@ -112,8 +112,8 @@ public class MenteeController {
 
     class MenteeHash{
 
-        public String hashPassword(String mentee_index, String insertPassword) {
-            byte[] salt = mentee_index.getBytes();
+        public String hashPassword(Long mentee_index, String insertPassword) {
+            byte[] salt = mentee_index.toString().getBytes();
             byte[] a = insertPassword.getBytes();
             byte[] bytes = new byte[a.length + salt.length];
 
@@ -176,7 +176,7 @@ public class MenteeController {
         List<Mentee> mentees = menteeService.findID(menteeJoinForm.getID());
 
         MenteeHash hash = new MenteeHash();
-        String hashPassword = hash.hashPassword(mentees.get(0).getIndex().toString(), menteeJoinForm.getPassword());
+        String hashPassword = hash.hashPassword(mentees.get(0).getIndex(), menteeJoinForm.getPassword());
 
         if(mentees.isEmpty()){
             System.out.println("no such ID");
@@ -397,7 +397,11 @@ public class MenteeController {
 
         newMentee.setIndex(mentee_id);
         newMentee.setID(mentee);
-        newMentee.setPassword(oldMentee.getPassword());
+
+        MenteeHash hash = new MenteeHash();
+        String hashedPassword = hash.hashPassword(mentee_id, menteeModifyForm.getPassword());
+        newMentee.setPassword(hashedPassword);
+
         newMentee.setName(oldMentee.getName());
         newMentee.setSchool(oldMentee.getSchool());
         newMentee.setGrade(oldMentee.getGrade());
@@ -456,6 +460,7 @@ public class MenteeController {
         else {
             String oldPassword = menteeService.findID(mentee).get(0).getPassword();
             newMentee.setPassword(oldPassword);
+            
         }
 
         if(!menteeModifyForm.getName().isEmpty()){
@@ -675,6 +680,11 @@ public class MenteeController {
         for(Like like : whoILiked){
             MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
             Mentor mentor = mentorService.findOne(like.getMentor_index());
+            List<Chat> chatList = chatService.findChat(like.getMentee_index(),like.getMentor_index());
+            Chat lastChat = chatList.get(chatList.size()-1);
+            mobileMentorJoinForm.setText(lastChat.getText());
+
+
             mobileMentorJoinForm.setIndex(mentor.getIndex());
             mobileMentorJoinForm.setID(mentor.getID());
             mobileMentorJoinForm.setName(mentor.getName());

@@ -8,6 +8,7 @@ import lombok.Setter;
 public class MobileMenteeJoinForm {
 
     private Long index;
+    private String ID;
     private String name;
     private String school;
     private Float grade;

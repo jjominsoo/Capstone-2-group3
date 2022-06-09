@@ -32,6 +32,10 @@ public class ChatService {
         return chatRepository.findReceiver(receiverIndex);
     }
 
+    public List<Chat> findChat(Long senderIndex, Long receiverIndex){
+        return chatRepository.findChat(senderIndex, receiverIndex);
+    }
+
 //    public boolean login(Mentee menteeId) {
 //        Mentee findMentee = menteeRepository.findOne(mentee.getIndex());
 //        System.out.println("findMentee = " + findMentee);

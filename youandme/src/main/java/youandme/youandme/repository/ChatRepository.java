@@ -30,4 +30,11 @@ public class ChatRepository {
                 .getResultList();
 
     }
+
+    public List<Chat> findChat(Long sender_index, Long receiver_index){
+        return em.createQuery("select m from Chat m where (m.sender_index = :sender_index and receiver_index = :receiver_index) or (m.sender_index = :receiver_index and receiver_index = :sender_index)", Chat.class)
+                .setParameter("sender_index", sender_index)
+                .setParameter("receiver_index", receiver_index)
+                .getResultList();
+    }
 }

@@ -234,7 +234,7 @@ public class MentorController {
         else{
             mentor.setPass(false);
         }
-        mentorService.resave(mentor);
+        mentorService.pass(mentor);
         return "redirect:/mentors";
     }
 
@@ -814,7 +814,7 @@ public class MentorController {
             CompanyFiles oldCompanyFile = new CompanyFiles(oldCompanyOriName,oldCompanyName,oldCompanyPath);
             newMentor.setCompanyFiles(oldCompanyFile);
         }
-
+        mentorService.nonPass(newMentor);
         mentorService.update(mentor_id, newMentor);
 
         return newMentor;
@@ -877,6 +877,7 @@ public class MentorController {
         else {
             String oldCompany = mentorService.findID(mentor).get(0).getCompany();
             newMentor.setCompany(oldCompany);
+            mentorService.nonPass(newMentor);
         }
 
         if(!mentorModifyForm.getShortIntroduce().isEmpty()){
@@ -916,6 +917,7 @@ public class MentorController {
             MobileMenteeJoinForm mobileMenteeJoinForm = new MobileMenteeJoinForm();
             Mentee mentee = menteeService.findOne(like.getMentee_index());
             mobileMenteeJoinForm.setIndex(mentee.getIndex());
+            mobileMenteeJoinForm.setID(mentee.getID());
             mobileMenteeJoinForm.setName(mentee.getName());
             mobileMenteeJoinForm.setSchool(mentee.getSchool());
             mobileMenteeJoinForm.setGrade(mentee.getGrade());

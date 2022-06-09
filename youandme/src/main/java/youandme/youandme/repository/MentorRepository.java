@@ -21,6 +21,11 @@ public class MentorRepository {
         em.createQuery("update Mentor m set m.pass=true where m.index = :index")
                 .setParameter("index", mentor.getIndex());
     }
+
+    public void nonPass(Mentor mentor){
+        em.createQuery("update Mentor m set m.pass=false where m.index = :index")
+                .setParameter("index", mentor.getIndex());
+    }
     public Mentor findOne(Long id){
         return em.find(Mentor.class, id);
     }
