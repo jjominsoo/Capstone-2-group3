@@ -777,6 +777,7 @@ public class MentorController {
 
         newMentor.setIndex(mentor_id);
         newMentor.setID(mentor);
+
         newMentor.setPassword(oldMentor.getPassword());
         newMentor.setName(oldMentor.getName());
         newMentor.setSchool(oldMentor.getSchool());

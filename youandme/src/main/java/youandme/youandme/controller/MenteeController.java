@@ -689,8 +689,9 @@ public class MenteeController {
             MobileMentorJoinForm mobileMentorJoinForm = new MobileMentorJoinForm();
             Mentor mentor = mentorService.findOne(like.getMentor_index());
             List<Chat> chatList = chatService.findChat(like.getMentee_index(),like.getMentor_index());
-            Chat lastChat = chatList.get(chatList.size()-1);
-            if(!lastChat.getText().isEmpty()){
+
+            if(!chatList.isEmpty()){
+                Chat lastChat = chatList.get(chatList.size()-1);
                 mobileMentorJoinForm.setText(lastChat.getText());
             }
             else{
