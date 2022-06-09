@@ -144,26 +144,6 @@ public class MenteeController {
         return "mentees/menteeList";
     }
     //=====================================================================================
-    @ResponseBody
-    @GetMapping(value = "/menteeList")
-    public List<MobileMentee> menteeList(Model model){
-
-        List<Mentee> mentees = menteeService.findMentees();
-
-        List<MobileMentee> mobileMenteeList = new ArrayList<>();
-        for (Mentee mentee : mentees) {
-            MobileMentee mobileMentee = new MobileMentee();
-            mobileMentee.setIndex(mentee.getIndex());
-            mobileMentee.setID(mentee.getID());
-            mobileMentee.setName(mentee.getName());
-            mobileMentee.setSchool(mentee.getSchool());
-            mobileMentee.setGrade(mentee.getGrade());
-            mobileMentee.setSubject(mentee.getSubject());
-            mobileMentee.setProfileFilePath(mentee.getProfiles().getProfilePath()+mentee.getProfiles().getProfileName());
-            mobileMenteeList.add(mobileMentee);
-        }
-        return mobileMenteeList;
-    }
 
 
     //===================================멘티로그인 (앱)==================================================
