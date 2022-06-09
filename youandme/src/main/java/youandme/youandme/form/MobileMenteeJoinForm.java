@@ -15,6 +15,6 @@ public class MobileMenteeJoinForm {
     private String subject;
     private String profileFilePath;
     private boolean status;
-
+    private String text;
     //모바일로 보내는 멘티 폼
 }

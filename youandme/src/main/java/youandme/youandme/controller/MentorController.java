@@ -916,6 +916,9 @@ public class MentorController {
         for(Like like : LikedByWhom){
             MobileMenteeJoinForm mobileMenteeJoinForm = new MobileMenteeJoinForm();
             Mentee mentee = menteeService.findOne(like.getMentee_index());
+            List<Chat> chatList = chatService.findChat(like.getMentee_index(),like.getMentor_index());
+            Chat lastChat = chatList.get(chatList.size()-1);
+            mobileMenteeJoinForm.setText(lastChat.getText());
             mobileMenteeJoinForm.setIndex(mentee.getIndex());
             mobileMenteeJoinForm.setID(mentee.getID());
             mobileMenteeJoinForm.setName(mentee.getName());
