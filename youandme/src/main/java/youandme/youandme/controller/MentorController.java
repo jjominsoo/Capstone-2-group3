@@ -273,7 +273,7 @@ public class MentorController {
         List<Mentor> mentors = mentorService.findID(mentorJoinForm.getID());
 
         MentorHash hash = new MentorHash();
-        String hashPassword = hash.hashPassword(mentors.get(0).getIndex().toString(), mentorJoinForm.getPassword());
+        String hashPassword = hash.hashPassword(mentors.get(0).getIndex(), mentorJoinForm.getPassword());
 
         if(mentors.isEmpty()){
             System.out.println("no such ID");
