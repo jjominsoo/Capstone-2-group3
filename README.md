@@ -1,6 +1,6 @@
 # [너랑나랑은]
 멘티 맞춤 멘토 추천 앱
-( Capstone-2-group3 )
+<br>
 ![youandi](https://user-images.githubusercontent.com/75295665/172878536-41253c25-f4d3-4028-b50d-94bea1fc73ac.png)
 
 
